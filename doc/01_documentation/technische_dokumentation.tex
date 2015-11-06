@@ -1,0 +1,294 @@
+%
+% Main document
+% ===========================================================================
+% This is part of the document "Smartwatches in siot.net".
+% Authors: paras1
+%
+
+% Document informations
+%---------------------------------------------------------------------------
+\def \module		{Bachelor Thesis}					% Module name
+\def \title			{Smartwatches in siot.net}		% Title
+\def \version		{X1.0}
+\def \author		{Sathesh Paramasamy}
+\def \logo			{BFH_Logo_C_de_fr_en_100_4CU}	% choose the correct logo in
+													% the folder Bilder/BFH_Logo
+%-----------------------------------------------------------------%----------
+
+%---------------------------------------------------------------------------
+\documentclass[
+	a4paper,				% paper format
+	10pt,					% fontsize
+%	twoside,				% double-sided
+	oneside,				% one-sided
+	openright,				% begin new chapter on right side
+	notitlepage,			% use no standard title page
+	parskip=half,			% set paragraph skip to half of a line
+]{scrreprt}					% KOMA-script report
+%---------------------------------------------------------------------------
+
+\raggedbottom
+\KOMAoptions{cleardoublepage=plain}	% Add header and footer on blank pages
+
+
+% Load Standard Packages:
+%---------------------------------------------------------------------------
+\usepackage[standard-baselineskips]{cmbright}
+
+\usepackage[ngerman]{babel}		% german hyphenation
+%\usepackage[latin1]{inputenc}  % Unix/Linux - load extended character set (ISO 8859-1)
+%\usepackage[ansinew]{inputenc}  % Windows - load extended character set (ISO 8859-1)
+\usepackage[utf8]{inputenc}    % UTF-8 - load extended charater set
+\usepackage[T1]{fontenc}		% hyphenation of words with ä,ö and ü
+\usepackage{textcomp}			% additional symbols
+\usepackage{ae}					% better resolution of Type1-Fonts
+\usepackage{fancyhdr}			% simple manipulation of header and footer
+\usepackage{graphicx}			% integration of images
+\usepackage{float}				% floating objects
+\usepackage{caption}			% for captions of figures and tables
+\usepackage{booktabs}			% package for nicer tables
+\usepackage{tocvsec2}			% provides means of controlling the sectional numbering
+\usepackage{rotating}			% rotating tables and other objects
+\usepackage{pdflscape}			% change single pages landscape
+\usepackage{tabularx}			% create nice tables
+\usepackage{pdfpages}			% insert full pdf pages
+\usepackage{nameref}			% reference by name, not by chapter number
+\usepackage{dirtree}			% create directory trees
+\usepackage{listings}			% include source code
+\usepackage{epstopdf}			% convert eps graphics to pdf
+%---------------------------------------------------------------------------
+
+% Load Math Packages
+%---------------------------------------------------------------------------
+\usepackage{amsmath}			% various features to facilitate writing math formulas
+\usepackage{amsthm}				% enhanced version of latex's newtheorem
+\usepackage{amsfonts}			% set of miscellaneous TeX fonts that augment the standard CM
+\usepackage{amssymb}			% mathematical special characters
+\usepackage{exscale}			% mathematical size corresponds to textsize
+%---------------------------------------------------------------------------
+
+% Package to facilitate placement of boxes at absolute positions
+%---------------------------------------------------------------------------
+\usepackage[absolute]{textpos}
+\setlength{\TPHorizModule}{1mm}
+\setlength{\TPVertModule}{1mm}
+%---------------------------------------------------------------------------
+
+% Definition of Colors
+%---------------------------------------------------------------------------
+\RequirePackage{color}							% Color (not xcolor!)
+\definecolor{linkblue}{rgb}{0,0,0.8}				% Standard
+\definecolor{darkblue}{rgb}{0,0.08,0.45}			% Dark blue
+\definecolor{brickred}{cmyk}{0,0.89,0.94,0.28}	% Brickred
+\definecolor{bfhred}{rgb}{0.776,0,0.066}			% Red
+% specific colors
+\definecolor{titlecolor}{rgb}{0,0.08,0.45}		% Color used for the title
+%\definecolor{linkcolor}{rgb}{0,0,0.8}			% Blue for the web- and cd-version!
+\definecolor{linkcolor}{rgb}{0,0,0}				% Black for the print-version!
+\definecolor{code_bg}{gray}{0.8}					% Source Code Background
+%---------------------------------------------------------------------------
+
+% Hyperref Package (Create links in a pdf)
+%---------------------------------------------------------------------------
+\usepackage[
+	pdftex,ngerman,bookmarks,plainpages=false,pdfpagelabels,
+	backref = {false},					% No index backreference
+	colorlinks = {true},					% Color links in a PDF
+	hypertexnames = {true},				% no failures "same page(i)"
+	bookmarksopen = {true},				% opens the bar on the left side
+	bookmarksopenlevel = {0},			% depth of opened bookmarks
+	pdftitle = {\title},					% PDF-property
+	pdfauthor = {\author},				% PDF-property
+	pdfsubject = {\module},				% PDF-property
+	linkcolor = {linkcolor},				% Color of Links
+	citecolor = {linkcolor},				% Color of Cite-Links
+	urlcolor = {linkcolor},				% Color of URLs
+]{hyperref}
+%---------------------------------------------------------------------------
+
+% Set up page dimension
+%---------------------------------------------------------------------------
+\usepackage{geometry}
+\geometry{
+	a4paper,
+	left=20mm,
+	right=15mm,
+	top=30mm,
+	headheight=20mm,
+	headsep=10mm,
+	textheight=232mm,
+	footskip=15mm
+}
+%---------------------------------------------------------------------------
+
+% Makeindex Package
+%---------------------------------------------------------------------------
+\usepackage{makeidx}				% To produce index
+\makeindex						% Index-Initialisation
+%---------------------------------------------------------------------------
+
+% Glossary Package
+%---------------------------------------------------------------------------
+% the glossaries package uses makeindex
+% if you use TeXnicCenter do the following steps:
+%  - Goto "Ausgabeprofile definieren" (ctrl + F7)
+%  - Select the profile "LaTeX => PDF"
+%  - Add in register "Nachbearbeitung" a new "Postprozessoren" point named Glossar
+%  - Select makeindex.exe in the field "Anwendung" ( ..\MiKTeX x.x\miktex\bin\makeindex.exe )
+%  - Add this [ -s "%tm.ist" -t "%tm.glg" -o "%tm.gls" "%tm.glo" ] in the field "Argumente"
+%
+% for futher informations go to http://ewus.de/tipp-1029.html
+%---------------------------------------------------------------------------
+\usepackage[nonumberlist]{glossaries}
+\makeglossaries
+%---------------------------------------------------------------------------
+
+% Listings Package
+%---------------------------------------------------------------------------
+\lstdefinestyle{CCode}{
+	showspaces=false,
+	showtabs=false,
+	language={[ANSI]C},
+	breaklines=true,
+	basicstyle={\footnotesize \ttfamily},
+	backgroundcolor=\color{code_bg},
+	%frame=single,
+	tab=\rightarrowfill,
+	captionpos=b
+}
+
+\lstdefinestyle{CppCode}{
+	showspaces=false,
+	showtabs=false,
+	language={[ISO]C++},
+	breaklines=true,
+	basicstyle={\footnotesize \ttfamily},
+	backgroundcolor=\color{code_bg},
+	%frame=single,
+	tab=\rightarrowfill,
+	captionpos=b
+}
+
+\lstdefinestyle{JavaCode}{
+	showspaces=false,
+	showtabs=false,
+	language={Java},
+	breaklines=true,
+	basicstyle={\footnotesize \ttfamily},
+	backgroundcolor=\color{code_bg},
+	%frame=single,
+	tab=\rightarrowfill,
+	captionpos=b
+}
+%---------------------------------------------------------------------------
+
+% Intro:
+%---------------------------------------------------------------------------
+\begin{document}					% Start Document
+\settocdepth{section}			% Set depth of toc
+\pagenumbering{Roman}
+%---------------------------------------------------------------------------
+
+% Set up header and footer
+%---------------------------------------------------------------------------
+\fancyhf{}						% clean all fields
+\fancypagestyle{plain}{			% new definition of plain style
+
+% Use this for double-sided:
+%	\fancyfoot[OL,ER]{\footnotesize				% footer left part -->	version
+%		V\version \\
+%		\author \\
+%		\today
+%	}
+%	\fancyfoot[OR,EL]{\footnotesize \thepage}	% footer right part --> page number
+%	\fancyhead[C]{\module}						% header right part --> module name
+%	\fancyhead[OR,EL]{\footnotesize \leftmark}	% footer left part -->	chapter
+%	\fancyhead[OL,ER]{							% header left part --> BFH logo
+%		\begin{textblock}{0}[0,0](29,9)
+%			\includegraphics[scale=1.0]{Bilder/\logo}
+%		\end{textblock}
+%	}
+
+% Use this for one-sided:
+	\fancyfoot[L]{\footnotesize					% footer left part -->	version
+		\version \\
+		\author \\
+		\today
+	}
+	\fancyfoot[R]{\footnotesize \thepage}		% footer right part --> page number
+	\fancyhead[C]{\module}						% header right part --> module name
+	\fancyhead[R]{\footnotesize \leftmark}		% footer left part -->	chapter
+	\fancyhead[L]{								% header left part --> BFH logo
+		\begin{textblock}{0}[0,0](20,9)
+			\includegraphics[scale=0.9]{Bilder/BFH_Logo/\logo}
+		\end{textblock}
+	}
+}
+
+\renewcommand{\chaptermark}[1]{\markboth{\thechapter.  #1}{}}
+\renewcommand{\headrulewidth}{0pt}				% no header stripline
+\renewcommand{\footrulewidth}{0pt}				% no bottom stripline
+
+\pagestyle{plain}
+%---------------------------------------------------------------------------
+
+
+% Title Page and Abstract
+%---------------------------------------------------------------------------
+\include{00_Vorspann/01_Titelseite}
+\cleardoubleemptypage
+\setcounter{page}{1}
+\include{00_Vorspann/02_Vorwort}
+%---------------------------------------------------------------------------
+
+% Table of contents and listings
+%---------------------------------------------------------------------------
+\tableofcontents
+\cleardoublepage
+%---------------------------------------------------------------------------
+
+\pagenumbering{arabic}
+\settocdepth{subsection}		% Set depth of toc
+
+% Main part - Part I
+%---------------------------------------------------------------------------
+\onecolumn
+\include{01_Einleitung/01_Einleitung}
+
+% Main part - Part II
+%---------------------------------------------------------------------------
+\onecolumn
+\include{02_Analyse_Marktsegment_SW_IoT/01_Marktsegmente}
+
+% Main part - Part III
+%---------------------------------------------------------------------------
+\onecolumn
+\include{03_Analyse_Anwendungen_SW_IoT/01_Anwendungen}
+
+
+% Main part - Part IV
+%---------------------------------------------------------------------------
+\onecolumn
+\include{04_Technische_Anforderungen/01_Technische_Anforderung_an_SW}
+
+
+% Main part - Part 5V
+%---------------------------------------------------------------------------
+\onecolumn
+\include{05_Evaluation_SW_Produkte/01_Evaluation_SW_Produkte}
+
+%---------------------------------------------------------------------------
+
+%---------------------------------------------------------------------------
+
+% Index
+%---------------------------------------------------------------------------
+%\cleardoublepage
+%\phantomsection
+%\addcontentsline{toc}{chapter}{Stichwortverzeichnis}
+%\renewcommand{\indexname}{Stichwortverzeichnis}
+%\printindex
+%---------------------------------------------------------------------------
+
+%---------------------------------------------------------------------------
+\end{document}
