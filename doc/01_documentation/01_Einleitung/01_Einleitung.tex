@@ -1,8 +1,30 @@
 \chapter{Einleitung}
-Dieses Dokument dient dazu die Marktanalyse zu erläutern von Internet of Things und Smartwatches.
-Die in diesem Dokument behandelte Marktanaylse besteht aus der Marktsegementierung und der Bedürfnisanalyse.
-Mit der Bedürfnisanalyse werden Applikationen für Smartwatches ermittelt, die im oder für siot.net angewendet werden können.
-Für die gefundenen Applikationen resultieren noch technische Anforderungen an Smartwatches.
+Dieses Dokument beschreibt die Bachelor Thesis zum Thema Smartwaches in siot.net.
+
+\section{Ausgangslage}
+Die Fachgruppe SIOT des Instituts RISIS der BFH konzipiert und entwickelt zusammen mit Industriepartner die Plattform siot.net, welche Sensoren und Aktoren weltweit mit IoT-Anwendungen (IoT: Internet of Things) verbindet. Smartwaches, welche eine rasante Marktakzeptanz geniessen, spielen eine grosse Rolle im Bereich IoT, denn sie integrieren eine Anzahl von Sensoren und können am Handgelenk Informationen anzeigen. Allerdings gibt es betreffend Funktionalität eine grosse Spannweite bei den Smartwatches, was deren mögliche Einsatzgebiete schliesslich definiert.
+
+\section{Problemstellung}
+Die Projektarbeit 2 erlaubte Android Smartwatch zu analysieren. Diese Erkenntnisse sollen genutzt werden um in einer praktischen Umsetzung konkretisiert werden.
+- Dabei sollend folgende Themen genauer betrachtet werden: \\
+- Welche Anwendungsklassen kann man für Smartwatches erkennen? \\
+- Wie werden Smartwaches am weltweiten Internet angebunden? \\
+- Welche GUI-Elemente werden bereit gestellt? \\
+- Welche Sensoren und Aktoren stehen zur Verfügung? \\
+
+Die Bachelorarbeit beinhaltet eine Markt- und Bedürfnisanalyse welche die Marktsegmente und die Bedürfnisse aus Sicht IoT für Smartwatch aufzeigen. Für die identifizerten Anwendungen werden Smartwatches evaluiert.\\
+Als weitere Aufgabe wird eine generische System-Architektur definiert, mit welcher Software für Smartwatches für IoT Anwendungen im siot.net Umfeld realisiert werden kann. \\
+In einem formalen Teil werden die Anforderung bzw. technischen Anforderung, einer bestimmten Smartwatch an eine Anwendung gestellt, untersucht und aufgezeigt. Hierbei sollen auch Genauigkeiten und Zuverlässigkeiten genauer betrachtet werden. \\
+Es wird ein Software Design erstellt mit welchem 2 bis 3 konkrete Anwendungen implementiert werden könnten. \\
+Daraus wird mindestens eine konkrete Anwendung implementiert. Zur Implementation wird eine Dokumentation erstellt welche von Ingenieuren gelesen wird. \\
+Schlussendlich werden in diesem Dokument alle Ergebnisse berichtet.
+
+\section{Zielsetzung}
+Die Anbindung von Smartwatches an die siot.net Plattform soll implementiert werden. Dabei wird Wert gelegt das dies eine generische Lösung ist.
+
+\section{Abgrenzung}
+Smartwatches im allgemein gibt es von vielen verschiedenen Anbietern. In dieser Arbeit werden aller Arten Smartwatches analysiert. Der Schwerpunkt liegt für das Software Designs und die Implementationen auf Smartwatches, die mit dem Betriebssystem Android ausgeliefert werden. Diese Abgrenzung findet auch statt um die Programmiersprache hauptsächlich auch Java zu beschränken.
+Für Zeitplannung wird ein tabellarischer Zeitplan verwendet. Als Prozesssteuerung wird Kanban verwendet. Da dies eine Einzelarbeit ist soll die schlanken Zeit- und Prozessplanungsmethoden starken Overhead eindämmen.
 
 \section{Internet of Things (IoT)}
 Das Internet der Dinge (Internet of Things / IoT) ist ein Gebilde, bei dem Objekte, Tiere oder Menschen mit einem einzigartigen Identifikator ausgestattet sind. Weiterhin ist damit die Möglichkeit verbunden, Daten über ein Netzwerk ohne Interaktionen Mensch-zu-Mensch oder Mensch-zu-Computer zu übertragen. Das Internet der Dinge hat sich aus der Konvergenz der drahtlosen (wireless) Technologie, MEMS (Micro-Electromechanical Systems) und dem Internet entwickelt.
@@ -15,22 +37,21 @@ Smartwatches sind kompakte Computersysteme, welche vom Benutzers am Handgelenk g
 Diese Uhren unterstützen den Träger beim alltäglichen Leben. Gehören zur Gruppe der Wearables und damit zu einem essentiellen Bereich des IoT.
 
 Mit einer Smartwatch können viele verschiedene Funktionalitäten mit einem Gerät abgedeckt werden.
-
 \subsection{Beispiele}
 \begin{tabular}{ll}
-Pulsmessung: &	Der Träger hat seinen Puls immer unter kontrolle \\
-Bewegungen:	& Ob eine Person sich genug bewegt, kann gemessen werden \\
-Fitness: & Genaue Bewegungen können registriert werden \\
+Pulsmessung: &	Überwachung des persönlichen Pulses \\
+Bewegungen:	& Mögliche Bewegungen welche über das Handgelenk ermittelt werden können analysieren \\
+Fitness: & Genaue Bewegungen können registriert und in kombination von Weg und ausgewertet werden \\
 Informationen: & Der Träger kann Informationen empfangen welche auf seinem Smartphone ersichtlich sind
 \end{tabular}
 
 \subsection{Fachbereich Informatik}
-Smartwatches gehören in den Bereich der Wearables. Und Wearables ist ein fachübergreifendes Gebiet der Informatik, einige Fachgebiete:
+Smartwatches gehören in den Bereich der Wearables. Dies ist ein fachübergreifendes Gebiet der Informatik, einige Fachgebiete:
 
-Ubiquitous Computing, die Rechnerallgegenwärtig \\
-Pervasive Computing, die Vernetzung von Alltagsgegenständen \\
-Mobile Computing, mobile Mensch zu Maschinen Kommunikation \\
-M2M, Machine-to-Machine, Informationsaustausch zwischen Zielgeräten \\
-IoT, Internet of Things, dass auf den vorhergehenden Fachbereichen basiert
+- Ubiquitous Computing, die Rechnerallgegenwärtig \\
+- Pervasive Computing, die Vernetzung von Alltagsgegenständen \\
+- Mobile Computing, mobile Mensch zu Maschinen Kommunikation \\
+- M2M, Machine-to-Machine, Informationsaustausch zwischen Zielgeräten \\
+- IoT, Internet of Things, dass auf den vorhergehenden Fachbereichen basiert
 
 \section{siot.net}
