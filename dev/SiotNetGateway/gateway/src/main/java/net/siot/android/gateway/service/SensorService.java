@@ -14,6 +14,7 @@ import android.util.SparseLongArray;
 import net.siot.android.gateway.connection.MQTTClient;
 import net.siot.android.gateway.util.JSONWriter;
 import net.siot.android.gateway.util.SensorTypeKeys;
+import net.siot.android.gateway.util.TopicUtil;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -327,7 +328,7 @@ public class SensorService extends Service implements SensorEventListener {
         JSONObject outJSON = new JSONObject();
         try {
             outJSON.put(guid, JSONWriter.getSensorJSON(guid, sensorType, accuracy, timestamp, values));
-            mqttClient.publishData(outJSON, guid);
+            mqttClient.publishData(TopicUtil.getTopic(TopicUtil.TOPIC_TYPE_DAT, guid), outJSON);
         } catch (JSONException e) {
             Log.e(TAG, e.getMessage(), e);
         }
