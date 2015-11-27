@@ -45,7 +45,7 @@
 \usepackage{fancyhdr}			% simple manipulation of header and footer
 \usepackage{graphicx}			% integration of images
 \usepackage{float}				% floating objects
-\usepackage{caption}			% for captions of figures and tables
+\usepackage[font=small]{caption}			% for captions of figures and tables
 \usepackage{booktabs}			% package for nicer tables
 \usepackage{tocvsec2}			% provides means of controlling the sectional numbering
 \usepackage{rotating}			% rotating tables and other objects
@@ -244,6 +244,7 @@
 % Table of contents and listings
 %---------------------------------------------------------------------------
 \tableofcontents
+\listoffigures
 \cleardoublepage
 %---------------------------------------------------------------------------
 
@@ -258,24 +259,27 @@
 % Main part - Part II
 %---------------------------------------------------------------------------
 \onecolumn
-\include{02_Analyse_Marktsegment_SW_IoT/01_Marktsegmente}
+\include{02_Grundlagen/01_Grundlagen}
+
+% Main part - Part II
+%---------------------------------------------------------------------------
+\onecolumn
+\include{03_Analyse_Marktsegment_SW_IoT/01_Marktsegmente}
 
 % Main part - Part III
 %---------------------------------------------------------------------------
 \onecolumn
-\include{03_Analyse_Anwendungen_SW_IoT/01_Anwendungen}
-
+\include{04_Analyse_Anwendungen_SW_IoT/01_Anwendungen}
 
 % Main part - Part IV
 %---------------------------------------------------------------------------
 \onecolumn
-\include{04_Technische_Anforderungen/01_Technische_Anforderung_an_SW}
-
+\include{05_Technische_Anforderungen/01_Technische_Anforderung_an_SW}
 
 % Main part - Part 5V
 %---------------------------------------------------------------------------
 \onecolumn
-\include{05_Evaluation_SW_Produkte/01_Evaluation_SW_Produkte}
+\include{06_Evaluation_SW_Produkte/01_Evaluation_SW_Produkte}
 
 %---------------------------------------------------------------------------
 
