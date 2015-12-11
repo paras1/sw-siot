@@ -3,7 +3,7 @@ package net.siot.android.gateway.messagetypes;
 /**
  * Created by Sathesh on 13.11.15.
  */
-public class ActorManifest {
+public class SensorActorManifest {
     private String name;
     private String type;
     private String description;

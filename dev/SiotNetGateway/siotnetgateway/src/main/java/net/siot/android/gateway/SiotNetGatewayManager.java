@@ -16,31 +16,33 @@ import net.siot.android.gateway.util.RestClient;
 public class SiotNetGatewayManager {
     private static final String TAG = "siotgw/SNGWManager";
 
-    Context ctx;
-    String sLicense;
-    String sURLServiceURL;
+    private Context ctx;
+    private String sURLServiceLocationPrefix;
 
+    public String sURLServiceLocation;
 
-    MQTTClient mqttClient;
+    public String sMqttBrokerUrl;
+
+    public MQTTClient mqttClient;
     SensorService sensorService;
 
 
-    public SiotNetGatewayManager(Context ctx, String sLicense) {
+    public SiotNetGatewayManager(Context ctx) {
 
         this.ctx = ctx;
-        this.sLicense = sLicense;
-
-        sURLServiceURL = "http://url.siot.net/?licence=";
+        sURLServiceLocationPrefix = "http://url.siot.net/?licence=";
     }
 
-    public boolean connectToSiotNet() {
+    public boolean connectToSiotNet(String sLicense) {
 
-        if(!mqttClient.isConnected() && sLicense != null && !sLicense.equals("")) {
-            Log.i(TAG, "JSON: " + RestClient.getSiotNetBrokerUrl(sURLServiceURL + sLicense));
-            SiotUrl siotUrl = new Gson().fromJson(RestClient.getSiotNetBrokerUrl(sURLServiceURL + sLicense), SiotUrl.class);
+        setURLServiceLocation(sURLServiceLocationPrefix + sLicense);
+        if((mqttClient == null || !mqttClient.isConnected()) && (sLicense != null && !sLicense.equals(""))) {
+            Log.i(TAG, "JSON: " + RestClient.getSiotNetBrokerUrl(sURLServiceLocation));
+            SiotUrl siotUrl = new Gson().fromJson(RestClient.getSiotNetBrokerUrl(sURLServiceLocation), SiotUrl.class);
+            setMqttBrokerUrl("tcp://"+siotUrl.getMqtt().getUrls().get(0)+":1883");
             Log.i(TAG, "JSON mqtt url:" + siotUrl.getMqtt().getUrls().get(0));
 
-            return connectBroker(sLicense, "tcp://"+siotUrl.getMqtt().getUrls().get(0)+":1883");
+            return connectBroker(sLicense, sMqttBrokerUrl);
 
         } else if (mqttClient.isConnected()) {
             Log.i(TAG, "Already connected to the MQTT broker");
@@ -52,8 +54,15 @@ public class SiotNetGatewayManager {
         }
     }
 
+    public boolean disconnectFromSiotNet() {
+        mqttClient.disconnectBroker();
+        return mqttClient.isConnected();
+    }
+
     private boolean connectBroker(String sCenterGUID, String sBrokerURL) {
-        mqttClient = new MQTTClient(ctx, sCenterGUID, sBrokerURL);
+        if (mqttClient == null);
+            mqttClient = new MQTTClient(ctx, sCenterGUID, sBrokerURL);
+
         mqttClient.connectBroker();
         int i = 0;
         while (!mqttClient.isConnected() || i<100) {
@@ -65,12 +74,44 @@ public class SiotNetGatewayManager {
             i++;
         }
         if (mqttClient.isConnected()) {
-            sensorService = new SensorService(sCenterGUID, mqttClient);
+            sensorService = new SensorService(ctx, sCenterGUID, mqttClient);
         } else {
             Log.i(TAG, "Connection to MQTT Broker "+sBrokerURL+" could not be established");
         }
         return mqttClient.isConnected();
     }
 
+    //Getter and Setters
 
+    public void setURLServiceLocation(String sURLServiceURL) {
+        this.sURLServiceLocation = sURLServiceURL;
+    }
+
+    public String getURLServiceLocation() {
+        return sURLServiceLocation;
+    }
+
+    public void setMqttBrokerUrl(String sMqttBrokerUrl) {
+        this.sMqttBrokerUrl = sMqttBrokerUrl;
+    }
+
+    public String getMqttBrokerUrl() {
+        return sMqttBrokerUrl;
+    }
+
+    public MQTTClient getMqttClient() {
+        return mqttClient;
+    }
+
+    public void setMqttClient(MQTTClient mqttClient) {
+        this.mqttClient = mqttClient;
+    }
+
+    public SensorService getSensorService() {
+        return sensorService;
+    }
+
+    public void setSensorService(SensorService sensorService) {
+        this.sensorService = sensorService;
+    }
 }

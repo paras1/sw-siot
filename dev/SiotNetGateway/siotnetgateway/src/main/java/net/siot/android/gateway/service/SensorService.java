@@ -16,7 +16,7 @@ import com.google.gson.Gson;
 
 import net.siot.android.gateway.connection.MQTTClient;
 import net.siot.android.gateway.messagetypes.SensorData;
-import net.siot.android.gateway.messagetypes.SensorManifest;
+import net.siot.android.gateway.messagetypes.SensorActorManifest;
 import net.siot.android.gateway.util.GUIDUtil;
 import net.siot.android.gateway.util.SensorTypeKeys;
 import net.siot.android.gateway.util.TopicUtil;
@@ -36,26 +36,26 @@ public class SensorService extends Service implements SensorEventListener {
 
     SensorManager mSensorManager;
 
-    Sensor accelerometerSensor;
-    Sensor ambientTemperatureSensor;
-    Sensor gameRotationVectorSensor;
-    Sensor geomagneticSensor;
-    Sensor gravitySensor;
-    Sensor gyroscopeSensor;
-    Sensor gyroscopeUncalibratedSensor;
-    Sensor heartrateSensor;
-    Sensor heartrateSamsungSensor;
-    Sensor lightSensor;
-    Sensor linearAccelerationSensor;
-    Sensor magneticFieldSensor;
-    Sensor magneticFieldUncalibratedSensor;
-    Sensor pressureSensor;
-    Sensor proximitySensor;
-    Sensor humiditySensor;
-    Sensor rotationVectorSensor;
-    Sensor significantMotionSensor;
-    Sensor stepCounterSensor;
-    Sensor stepDetectorSensor;
+    public Sensor accelerometerSensor;
+    public Sensor ambientTemperatureSensor;
+    public Sensor gameRotationVectorSensor;
+    public Sensor geomagneticSensor;
+    public Sensor gravitySensor;
+    public Sensor gyroscopeSensor;
+    public Sensor gyroscopeUncalibratedSensor;
+    public Sensor heartrateSensor;
+    public Sensor heartrateSamsungSensor;
+    public Sensor lightSensor;
+    public Sensor linearAccelerationSensor;
+    public Sensor magneticFieldSensor;
+    public Sensor magneticFieldUncalibratedSensor;
+    public Sensor pressureSensor;
+    public Sensor proximitySensor;
+    public Sensor humiditySensor;
+    public Sensor rotationVectorSensor;
+    public Sensor significantMotionSensor;
+    public Sensor stepCounterSensor;
+    public Sensor stepDetectorSensor;
 
     HashMap sensorMap = new HashMap<Integer, HashMap<String, String>>();
 
@@ -69,7 +69,7 @@ public class SensorService extends Service implements SensorEventListener {
     private ExecutorService executorService;
     private int filterId;
 
-    public SensorService(String sCenterGUID, MQTTClient mqttClient) {
+    public SensorService(Context ctx, String sCenterGUID, MQTTClient mqttClient) {
 
         this.sCenterGUID = sCenterGUID;
         this.mqttClient = mqttClient;
@@ -427,7 +427,7 @@ public class SensorService extends Service implements SensorEventListener {
     public void registerSensor(Sensor sensor) {
         if (sensor != null) {
             int sensorType = sensor.getType();
-            SensorManifest senMnf = new SensorManifest();
+            SensorActorManifest senMnf = new SensorActorManifest();
             String sensorGUID;
             if (sensorType == SensorTypeKeys.SENS_ACCELEROMETER) {
                 sensorGUID = GUIDUtil.getUUID();
