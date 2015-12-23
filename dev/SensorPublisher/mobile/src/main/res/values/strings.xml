@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">SensorPublisher</string>
+    <string name="info">Please enter your siot.net license code to connect</string>
+    <string name="action_settings">Settings</string>
+</resources>
