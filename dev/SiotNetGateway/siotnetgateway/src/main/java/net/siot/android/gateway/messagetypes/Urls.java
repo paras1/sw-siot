@@ -5,6 +5,7 @@ import java.util.List;
 
 /**
  * Created by Sathesh on 30.10.15.
+ * Data object class Urls. Representation of a JSON format.
  */
 public class Urls {
 

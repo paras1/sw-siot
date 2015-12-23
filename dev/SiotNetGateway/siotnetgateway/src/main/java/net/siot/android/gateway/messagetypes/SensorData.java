@@ -2,6 +2,7 @@ package net.siot.android.gateway.messagetypes;
 
 /**
  * Created by Sathesh on 13.11.15.
+ * Data object class SensorData. Representation of a JSON format.
  */
 public class SensorData {
     private long time;

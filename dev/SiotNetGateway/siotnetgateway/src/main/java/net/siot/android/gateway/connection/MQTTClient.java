@@ -1,9 +1,5 @@
 package net.siot.android.gateway.connection;
 
-/**
- * Created by Sathesh Paramasamy on 02.10.15.
- */
-
 import android.content.Context;
 import android.util.Log;
 import android.widget.Toast;
@@ -18,7 +14,10 @@ import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
 
-
+/**
+ * Created by Sathesh Paramasamy on 02.10.15.
+ * MQTT client using eclipse paho client
+ */
 public class MQTTClient implements MqttCallback {
     private static final String TAG = "siotag/MQTTClient";
 

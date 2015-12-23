@@ -1,4 +1,4 @@
-package net.siot.android.gateway.util;
+package net.siot.android.gateway.connection;
 
 import android.util.Log;
 
@@ -11,15 +11,27 @@ import java.net.URL;
 
 /**
  * Created by Sathesh on 30.10.15.
+ * REST API client. Used to get the URLs from the siot.net URL service.
  */
 public class RestClient {
 
     private static final String TAG = "SensorPub/RestClient";
 
+    /**
+     * Getting URL without user specified timeout (default 60s)
+     * @param url URL of the URL service
+     * @return JSON formatted String containing siot.net URLs (IoT center, MQTT broker)
+     */
     public static String getSiotNetBrokerUrl(String url) {
-        return getSiotNetBrokerUrl(url, 120000);
+        return getSiotNetBrokerUrl(url, 60000);
     }
 
+    /**
+     * Getting URL with self defined timeout
+     * @param url URL of the URL service
+     * @param timeout timeout in millis
+     * @return JSON formatted String containing siot.net URLs (IoT center, MQTT broker)
+     */
     public static String getSiotNetBrokerUrl(String url, int timeout) {
         HttpURLConnection c = null;
         try {

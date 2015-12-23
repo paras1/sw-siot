@@ -29,10 +29,11 @@ import java.util.concurrent.TimeUnit;
 
 
 /**
- * Created by Sathesh Paramasamy on 02.10.15.
+ * Created by Sathesh Paramasamy on 12.10.15.
+ * Pre-configured SensorService for mobile devices which will be connected to siot.net.
  */
-public class SensorService extends Service implements SensorEventListener {
-    private static final String TAG = "SensorPub/SensorService";
+public class SensorServiceMobile extends Service implements SensorEventListener {
+    private static final String TAG = "SensorPub/SenServMobile";
 
     SensorManager mSensorManager;
 
@@ -61,18 +62,24 @@ public class SensorService extends Service implements SensorEventListener {
 
     MQTTClient mqttClient;
 
-    Context ctx;
+    private Context ctx;
 
     private String sCenterGUID;
 
     private SparseLongArray lastSensorData;
     private ExecutorService executorService;
-    private int filterId;
 
-    public SensorService(Context ctx, String sCenterGUID, MQTTClient mqttClient) {
+    /**
+     * Constructor for SensorServiceMobile.
+     * @param ctx needed because android sensor must have an Context
+     * @param sCenterGUID for publishes and subscribes to and from the correct siot.net center
+     * @param mqttClient mqttClient which manages the connection to the MQTT broker
+     */
+    public SensorServiceMobile(Context ctx, String sCenterGUID, MQTTClient mqttClient) {
 
         this.sCenterGUID = sCenterGUID;
         this.mqttClient = mqttClient;
+        this.ctx = ctx;
 
         executorService = Executors.newCachedThreadPool();
         lastSensorData = new SparseLongArray();
@@ -102,6 +109,10 @@ public class SensorService extends Service implements SensorEventListener {
 
     }
 
+    /**
+     * Starts all listeners of available sensors on the device.
+     * The correct connection to the siot.net is TODO.
+     */
     public void startAllListeners() {
 
         //Register sensor listeners
@@ -158,7 +169,7 @@ public class SensorService extends Service implements SensorEventListener {
                             @Override
                             public void run() {
                                 Log.d(TAG, "register Heartrate Sensor");
-                                mSensorManager.registerListener(SensorService.this, heartrateSensor, SensorManager.SENSOR_DELAY_NORMAL);
+                                mSensorManager.registerListener(SensorServiceMobile.this, heartrateSensor, SensorManager.SENSOR_DELAY_NORMAL);
 
                                 try {
                                     Thread.sleep(measurementDuration * 1000);
@@ -167,7 +178,7 @@ public class SensorService extends Service implements SensorEventListener {
                                 }
 
                                 Log.d(TAG, "unregister Heartrate Sensor");
-                                mSensorManager.unregisterListener(SensorService.this, heartrateSensor);
+                                mSensorManager.unregisterListener(SensorServiceMobile.this, heartrateSensor);
                             }
                         }, 3, measurementDuration + measurementBreak, TimeUnit.SECONDS);
             } else {
@@ -249,11 +260,18 @@ public class SensorService extends Service implements SensorEventListener {
 
     }
 
+    /**
+     * Stops all registered listeners on the SensorService.
+     */
     public void stopAllListeners() {
         if (mSensorManager != null)
             mSensorManager.unregisterListener(this);
     }
 
+    /**
+     * This override method from SensorEventListener reports sensor datas when they have changed.
+     * @param sensorEvent notifying SensorEvent
+     */
     @Override
     public void onSensorChanged(SensorEvent sensorEvent) {
         Log.i(TAG, "SENSOR Changed: " + sensorEvent.sensor.getName());
@@ -364,10 +382,13 @@ public class SensorService extends Service implements SensorEventListener {
                 senDat.setData(""+values[0]);
                 sendSensorData(sensorType, getSensorGUID(sensorType, "humidity"), new Gson().toJson(senDat));
             } else if (sensorType == SensorTypeKeys.SENS_HEARTRATE) {
-                //sensorValuesJSON.put("")
                 Log.i(TAG, "Values size HEARTRATE: " + values.length);
                 for (int i = 0; i < values.length; i++) {
-                    Log.i(TAG, "Values HEARTRATE"+i+": "+ ""+values[i]);
+                    Log.i(TAG, "Values HEARTRATE "+i+": "+ ""+values[i]);
+                    senDat.setType("float");
+                    senDat.setTime(sensorEvent.timestamp);
+                    senDat.setData(""+values[i]);
+                    sendSensorData(sensorType, getSensorGUID(sensorType, "heartrate"), new Gson().toJson(senDat));
                 }
             } else if (sensorType == SensorTypeKeys.SENS_PRESSURE) {
                 senDat.setType("float");
@@ -399,213 +420,221 @@ public class SensorService extends Service implements SensorEventListener {
         }
     }
 
+    /**
+     * Override method nothing to do at the moment.
+     * @param sensor
+     * @param i
+     */
     @Override
     public void onAccuracyChanged(Sensor sensor, int i) {
 
     }
 
+    /**
+     * Override method nothing to do at the moment.
+     * @param intent
+     * @return
+     */
     @Override
     public IBinder onBind(Intent intent) {
         return null;
     }
 
+    /**
+     * Stops all sensor listeners when de application is destroyed.
+     */
     public void onDestroy() {
         super.onDestroy();
-
         this.stopAllListeners();
     }
 
-    public void startListener(Sensor sensor) {
-        if (sensor != null) {
-            registerSensor(sensor);
-            mSensorManager.registerListener(this, sensor, SensorManager.SENSOR_DELAY_NORMAL);
-        } else {
-            Log.w(TAG, "No "+sensor.getName()+" found");
-        }
-    }
-
+    /**
+     * RegisterSensor notifies siot.net that a new sensor has connected.
+     * A manifest message is generated and publish to the MQTT broker.
+     * @param sensor sensor to register on siot.net
+     */
     public void registerSensor(Sensor sensor) {
         if (sensor != null) {
             int sensorType = sensor.getType();
             SensorActorManifest senMnf = new SensorActorManifest();
             String sensorGUID;
             if (sensorType == SensorTypeKeys.SENS_ACCELEROMETER) {
-                sensorGUID = GUIDUtil.getUUID();
+                sensorGUID = GUIDUtil.getGUID();
                 addSensorGUID(sensorGUID, sensorType, "x");
                 senMnf.setName(sensor.getName() + "_X");
                 senMnf.setType("" + sensor.getType());
                 senMnf.setDescription("Accelerometer X-axis of a " + Build.MANUFACTURER + " " + Build.MODEL + " " + Build.USER + " Android device");
                 mqttClient.publishData(TopicUtil.getTopic(TopicUtil.TOPIC_TYPE_MNF, sCenterGUID, sensorGUID), new Gson().toJson(senMnf));
-                sensorGUID = GUIDUtil.getUUID();
+                sensorGUID = GUIDUtil.getGUID();
                 addSensorGUID(sensorGUID, sensorType, "y");
                 senMnf.setName(sensor.getName() + "_Y");
                 senMnf.setType("" + sensor.getType());
                 senMnf.setDescription("Accelerometer Y-axis of a " + Build.MANUFACTURER + " " + Build.MODEL + " " + Build.USER + " Android device");
                 mqttClient.publishData(TopicUtil.getTopic(TopicUtil.TOPIC_TYPE_MNF, sCenterGUID, sensorGUID), new Gson().toJson(senMnf));
-                sensorGUID = GUIDUtil.getUUID();
+                sensorGUID = GUIDUtil.getGUID();
                 addSensorGUID(sensorGUID, sensorType, "z");
                 senMnf.setName(sensor.getName()+"_Z");
                 senMnf.setType("" + sensor.getType());
                 senMnf.setDescription("Accelerometer Z-axis of a " + Build.MANUFACTURER + " " + Build.MODEL + " " + Build.USER + " Android device");
                 mqttClient.publishData(TopicUtil.getTopic(TopicUtil.TOPIC_TYPE_MNF, sCenterGUID, sensorGUID), new Gson().toJson(senMnf));
             } else if (sensorType == SensorTypeKeys.SENS_GRAVITY) {
-                sensorGUID = GUIDUtil.getUUID();
+                sensorGUID = GUIDUtil.getGUID();
                 addSensorGUID(sensorGUID, sensorType, "x");
                 senMnf.setName(sensor.getName()+"_X");
                 senMnf.setType("" + sensor.getType());
                 senMnf.setDescription("Gravitation X-axis of a " + Build.MANUFACTURER + " " + Build.MODEL + " " + Build.USER + " Android device");
                 mqttClient.publishData(TopicUtil.getTopic(TopicUtil.TOPIC_TYPE_MNF, sCenterGUID, senMnf.getName()), new Gson().toJson(senMnf));
-                sensorGUID = GUIDUtil.getUUID();
+                sensorGUID = GUIDUtil.getGUID();
                 addSensorGUID(sensorGUID, sensorType, "y");
                 senMnf.setName(sensor.getName()+"_Y");
                 senMnf.setType("" + sensor.getType());
                 senMnf.setDescription("Gravitation Y-axis of a " + Build.MANUFACTURER + " " + Build.MODEL + " " + Build.USER + " Android device");
                 mqttClient.publishData(TopicUtil.getTopic(TopicUtil.TOPIC_TYPE_MNF, sCenterGUID, senMnf.getName()), new Gson().toJson(senMnf));
-                sensorGUID = GUIDUtil.getUUID();
+                sensorGUID = GUIDUtil.getGUID();
                 addSensorGUID(sensorGUID, sensorType, "z");
                 senMnf.setName(sensor.getName()+"_Z");
                 senMnf.setType("" + sensor.getType());
                 senMnf.setDescription("Gravitation Z-axis of a " + Build.MANUFACTURER + " " + Build.MODEL + " " + Build.USER + " Android device");
                 mqttClient.publishData(TopicUtil.getTopic(TopicUtil.TOPIC_TYPE_MNF, sCenterGUID, senMnf.getName()), new Gson().toJson(senMnf));
             } else if (sensorType == SensorTypeKeys.SENS_LINEAR_ACCELERATION) {
-                sensorGUID = GUIDUtil.getUUID();
+                sensorGUID = GUIDUtil.getGUID();
                 addSensorGUID(sensorGUID, sensorType, "x");
                 senMnf.setName(sensor.getName()+"_X");
                 senMnf.setType("" + sensor.getType());
                 senMnf.setDescription("Linear Accelerometer X-axis of a " + Build.MANUFACTURER + " " + Build.MODEL + " " + Build.USER + " Android device");
                 mqttClient.publishData(TopicUtil.getTopic(TopicUtil.TOPIC_TYPE_MNF, sCenterGUID, senMnf.getName()), new Gson().toJson(senMnf));
-                sensorGUID = GUIDUtil.getUUID();
+                sensorGUID = GUIDUtil.getGUID();
                 addSensorGUID(sensorGUID, sensorType, "y");
                 senMnf.setName(sensor.getName()+"_Y");
                 senMnf.setType("" + sensor.getType());
                 senMnf.setDescription("Linear Accelerometer Y-axis of a " + Build.MANUFACTURER + " " + Build.MODEL + " " + Build.USER + " Android device");
                 mqttClient.publishData(TopicUtil.getTopic(TopicUtil.TOPIC_TYPE_MNF, sCenterGUID, senMnf.getName()), new Gson().toJson(senMnf));
-                sensorGUID = GUIDUtil.getUUID();
+                sensorGUID = GUIDUtil.getGUID();
                 addSensorGUID(sensorGUID, sensorType, "z");
                 senMnf.setName(sensor.getName()+"_Z");
                 senMnf.setType("" + sensor.getType());
                 senMnf.setDescription("Linear Accelerometer Z-axis of a " + Build.MANUFACTURER + " " + Build.MODEL + " " + Build.USER + " Android device");
                 mqttClient.publishData(TopicUtil.getTopic(TopicUtil.TOPIC_TYPE_MNF, sCenterGUID, senMnf.getName()), new Gson().toJson(senMnf));
             } else if (sensorType == SensorTypeKeys.SENS_MAGNETIC_FIELD) {
-                sensorGUID = GUIDUtil.getUUID();
+                sensorGUID = GUIDUtil.getGUID();
                 addSensorGUID(sensorGUID, sensorType, "x");
                 senMnf.setName(sensor.getName()+"_X");
                 senMnf.setType("" + sensor.getType());
                 senMnf.setDescription("Magnetic Field X-axis of a " + Build.MANUFACTURER + " " + Build.MODEL + " " + Build.USER + " Android device");
                 mqttClient.publishData(TopicUtil.getTopic(TopicUtil.TOPIC_TYPE_MNF, sCenterGUID, senMnf.getName()), new Gson().toJson(senMnf));
-                sensorGUID = GUIDUtil.getUUID();
+                sensorGUID = GUIDUtil.getGUID();
                 addSensorGUID(sensorGUID, sensorType, "y");
                 senMnf.setName(sensor.getName()+"_Y");
                 senMnf.setType("" + sensor.getType());
                 senMnf.setDescription("Magnetic Field Y-axis of a " + Build.MANUFACTURER + " " + Build.MODEL + " " + Build.USER + " Android device");
                 mqttClient.publishData(TopicUtil.getTopic(TopicUtil.TOPIC_TYPE_MNF, sCenterGUID, senMnf.getName()), new Gson().toJson(senMnf));
-                sensorGUID = GUIDUtil.getUUID();
+                sensorGUID = GUIDUtil.getGUID();
                 addSensorGUID(sensorGUID, sensorType, "z");
                 senMnf.setName(sensor.getName()+"_Z");
                 senMnf.setType("" + sensor.getType());
                 senMnf.setDescription("Magnetic Field Z-axis of a " + Build.MANUFACTURER + " " + Build.MODEL + " " + Build.USER + " Android device");
                 mqttClient.publishData(TopicUtil.getTopic(TopicUtil.TOPIC_TYPE_MNF, sCenterGUID, senMnf.getName()), new Gson().toJson(senMnf));
             } else if (sensorType == SensorTypeKeys.SENS_MAGNETIC_FIELD_UNCALIBRATED) {
-                sensorGUID = GUIDUtil.getUUID();
+                sensorGUID = GUIDUtil.getGUID();
                 addSensorGUID(sensorGUID, sensorType, "x");
                 senMnf.setName(sensor.getName() + "_X");
                 senMnf.setType("" + sensor.getType());
                 senMnf.setDescription("Magnetic Field Uncalibrated X-axis of a " + Build.MANUFACTURER + " " + Build.MODEL + " " + Build.USER + " Android device");
                 mqttClient.publishData(TopicUtil.getTopic(TopicUtil.TOPIC_TYPE_MNF, sCenterGUID, senMnf.getName()), new Gson().toJson(senMnf));
-                sensorGUID = GUIDUtil.getUUID();
+                sensorGUID = GUIDUtil.getGUID();
                 addSensorGUID(sensorGUID, sensorType, "y");
                 senMnf.setName(sensor.getName() + "_Y");
                 senMnf.setType("" + sensor.getType());
                 senMnf.setDescription("Magnetic Field Uncalibrated Y-axis of a " + Build.MANUFACTURER + " " + Build.MODEL + " " + Build.USER + " Android device");
                 mqttClient.publishData(TopicUtil.getTopic(TopicUtil.TOPIC_TYPE_MNF, sCenterGUID, senMnf.getName()), new Gson().toJson(senMnf));
-                sensorGUID = GUIDUtil.getUUID();
+                sensorGUID = GUIDUtil.getGUID();
                 addSensorGUID(sensorGUID, sensorType, "z");
                 senMnf.setName(sensor.getName() + "_Z");
                 senMnf.setType("" + sensor.getType());
                 senMnf.setDescription("Magnetic Field Uncalibrated Z-axis of a " + Build.MANUFACTURER + " " + Build.MODEL + " " + Build.USER + " Android device");
                 mqttClient.publishData(TopicUtil.getTopic(TopicUtil.TOPIC_TYPE_MNF, sCenterGUID, senMnf.getName()), new Gson().toJson(senMnf));
-                sensorGUID = GUIDUtil.getUUID();
+                sensorGUID = GUIDUtil.getGUID();
                 addSensorGUID(sensorGUID, sensorType, "x_bias");
                 senMnf.setName(sensor.getName() + "_X_bias");
                 senMnf.setType("" + sensor.getType());
                 senMnf.setDescription("Magnetic Field Uncalibrated X-axis bias of a " + Build.MANUFACTURER + " " + Build.MODEL + " " + Build.USER + " Android device");
                 mqttClient.publishData(TopicUtil.getTopic(TopicUtil.TOPIC_TYPE_MNF, sCenterGUID, senMnf.getName()), new Gson().toJson(senMnf));
-                sensorGUID = GUIDUtil.getUUID();
+                sensorGUID = GUIDUtil.getGUID();
                 addSensorGUID(sensorGUID, sensorType, "y_bias");
                 senMnf.setName(sensor.getName() + "_Y_bias");
                 senMnf.setType("" + sensor.getType());
                 senMnf.setDescription("Magnetic Field Uncalibrated Y-axis bias of a " + Build.MANUFACTURER + " " + Build.MODEL + " " + Build.USER + " Android device");
                 mqttClient.publishData(TopicUtil.getTopic(TopicUtil.TOPIC_TYPE_MNF, sCenterGUID, senMnf.getName()), new Gson().toJson(senMnf));
-                sensorGUID = GUIDUtil.getUUID();
+                sensorGUID = GUIDUtil.getGUID();
                 addSensorGUID(sensorGUID, sensorType, "z_bias");
                 senMnf.setName(sensor.getName() + "_Z_bias");
                 senMnf.setType("" + sensor.getType());
                 senMnf.setDescription("Magnetic Field Uncalibrated Z-axis bias of a " + Build.MANUFACTURER + " " + Build.MODEL + " " + Build.USER + " Android device");
                 mqttClient.publishData(TopicUtil.getTopic(TopicUtil.TOPIC_TYPE_MNF, sCenterGUID, senMnf.getName()), new Gson().toJson(senMnf));
             } else if (sensorType == SensorTypeKeys.SENS_AMBIENT_TEMPERATURE) {
-                sensorGUID = GUIDUtil.getUUID();
+                sensorGUID = GUIDUtil.getGUID();
                 addSensorGUID(sensorGUID, sensorType, "temp");
                 senMnf.setName(sensor.getName());
                 senMnf.setType("" + sensor.getType());
                 senMnf.setDescription("Ambient Temperature of a " + Build.MANUFACTURER + " " + Build.MODEL + " " + Build.USER + " Android device");
                 mqttClient.publishData(TopicUtil.getTopic(TopicUtil.TOPIC_TYPE_MNF, sCenterGUID, senMnf.getName()), new Gson().toJson(senMnf));
             } else if (sensorType == SensorTypeKeys.SENS_GAME_ROTATION_VECTOR) {
-                sensorGUID = GUIDUtil.getUUID();
+                sensorGUID = GUIDUtil.getGUID();
                 addSensorGUID(sensorGUID, sensorType, "x");
                 senMnf.setName(sensor.getName() + "_X");
                 senMnf.setType("" + sensor.getType());
                 senMnf.setDescription("Game Rotation Vector X-axis of a " + Build.MANUFACTURER + " " + Build.MODEL + " " + Build.USER + " Android device");
                 mqttClient.publishData(TopicUtil.getTopic(TopicUtil.TOPIC_TYPE_MNF, sCenterGUID, senMnf.getName()), new Gson().toJson(senMnf));
-                sensorGUID = GUIDUtil.getUUID();
+                sensorGUID = GUIDUtil.getGUID();
                 addSensorGUID(sensorGUID, sensorType, "y");
                 senMnf.setName(sensor.getName() + "_Y");
                 senMnf.setType("" + sensor.getType());
                 senMnf.setDescription("Game Rotation Vector Y-axis of a " + Build.MANUFACTURER + " " + Build.MODEL + " " + Build.USER + " Android device");
                 mqttClient.publishData(TopicUtil.getTopic(TopicUtil.TOPIC_TYPE_MNF, sCenterGUID, senMnf.getName()), new Gson().toJson(senMnf));
-                sensorGUID = GUIDUtil.getUUID();
+                sensorGUID = GUIDUtil.getGUID();
                 addSensorGUID(sensorGUID, sensorType, "z");
                 senMnf.setName(sensor.getName() + "_Z");
                 senMnf.setType("" + sensor.getType());
                 senMnf.setDescription("Game Rotation Vector Z-axis of a " + Build.MANUFACTURER + " " + Build.MODEL + " " + Build.USER + " Android device");
                 mqttClient.publishData(TopicUtil.getTopic(TopicUtil.TOPIC_TYPE_MNF, sCenterGUID, senMnf.getName()), new Gson().toJson(senMnf));
-                sensorGUID = GUIDUtil.getUUID();
+                sensorGUID = GUIDUtil.getGUID();
                 addSensorGUID(sensorGUID, sensorType, "half_angle");
                 senMnf.setName(sensor.getName() + "_Half_Angle");
                 senMnf.setType("" + sensor.getType());
                 senMnf.setDescription("Game Rotation Vector half angle of a " + Build.MANUFACTURER + " " + Build.MODEL + " " + Build.USER + " Android device");
                 mqttClient.publishData(TopicUtil.getTopic(TopicUtil.TOPIC_TYPE_MNF, sCenterGUID, senMnf.getName()), new Gson().toJson(senMnf));
-                sensorGUID = GUIDUtil.getUUID();
+                sensorGUID = GUIDUtil.getGUID();
                 addSensorGUID(sensorGUID, sensorType, "est_head_acc");
                 senMnf.setName(sensor.getName() + "_Est_head_acc");
                 senMnf.setType("" + sensor.getType());
                 senMnf.setDescription("Game Rotation Vector estimated heading accuracy of a " + Build.MANUFACTURER + " " + Build.MODEL + " " + Build.USER + " Android device");
                 mqttClient.publishData(TopicUtil.getTopic(TopicUtil.TOPIC_TYPE_MNF, sCenterGUID, senMnf.getName()), new Gson().toJson(senMnf));
             } else if (sensorType == SensorTypeKeys.SENS_ROTATION_VECTOR) {
-                sensorGUID = GUIDUtil.getUUID();
+                sensorGUID = GUIDUtil.getGUID();
                 addSensorGUID(sensorGUID, sensorType, "x");
                 senMnf.setName(sensor.getName()+"_X");
                 senMnf.setType("" + sensor.getType());
                 senMnf.setDescription("Rotation Vector X-axis of a " + Build.MANUFACTURER + " " + Build.MODEL + " " + Build.USER + " Android device");
                 mqttClient.publishData(TopicUtil.getTopic(TopicUtil.TOPIC_TYPE_MNF, sCenterGUID, senMnf.getName()), new Gson().toJson(senMnf));
-                sensorGUID = GUIDUtil.getUUID();
+                sensorGUID = GUIDUtil.getGUID();
                 addSensorGUID(sensorGUID, sensorType, "y");
                 senMnf.setName(sensor.getName()+"_Y");
                 senMnf.setType("" + sensor.getType());
                 senMnf.setDescription("Rotation Vector Y-axis of a " + Build.MANUFACTURER + " " + Build.MODEL + " " + Build.USER + " Android device");
                 mqttClient.publishData(TopicUtil.getTopic(TopicUtil.TOPIC_TYPE_MNF, sCenterGUID, senMnf.getName()), new Gson().toJson(senMnf));
-                sensorGUID = GUIDUtil.getUUID();
+                sensorGUID = GUIDUtil.getGUID();
                 addSensorGUID(sensorGUID, sensorType, "z");
                 senMnf.setName(sensor.getName()+"_Z");
                 senMnf.setType("" + sensor.getType());
                 senMnf.setDescription("Rotation Vector Z-axis of a " + Build.MANUFACTURER + " " + Build.MODEL + " " + Build.USER + " Android device");
                 mqttClient.publishData(TopicUtil.getTopic(TopicUtil.TOPIC_TYPE_MNF, sCenterGUID, senMnf.getName()), new Gson().toJson(senMnf));
-                sensorGUID = GUIDUtil.getUUID();
+                sensorGUID = GUIDUtil.getGUID();
                 addSensorGUID(sensorGUID, sensorType, "half_angle");
                 senMnf.setName(sensor.getName()+"_Half_Angle");
                 senMnf.setType("" + sensor.getType());
                 senMnf.setDescription("Rotation Vector half angle of a " + Build.MANUFACTURER + " " + Build.MODEL + " " + Build.USER + " Android device");
                 mqttClient.publishData(TopicUtil.getTopic(TopicUtil.TOPIC_TYPE_MNF, sCenterGUID, senMnf.getName()), new Gson().toJson(senMnf));
-                sensorGUID = GUIDUtil.getUUID();
+                sensorGUID = GUIDUtil.getGUID();
                 addSensorGUID(sensorGUID, sensorType, "est_head_acc");
                 senMnf.setName(sensor.getName()+"_Est_head_acc");
                 senMnf.setType("" + sensor.getType());
@@ -614,112 +643,112 @@ public class SensorService extends Service implements SensorEventListener {
             } else if (sensorType == SensorTypeKeys.SENS_GEOMAGNETIC) {
                 //TODO
             } else if (sensorType == SensorTypeKeys.SENS_LIGHT) {
-                sensorGUID = GUIDUtil.getUUID();
+                sensorGUID = GUIDUtil.getGUID();
                 addSensorGUID(sensorGUID, sensorType, "lux");
                 senMnf.setName(sensor.getName());
                 senMnf.setType("" + sensor.getType());
                 senMnf.setDescription("Light of a " + Build.MANUFACTURER + " " + Build.MODEL + " " + Build.USER + " Android device");
                 mqttClient.publishData(TopicUtil.getTopic(TopicUtil.TOPIC_TYPE_MNF, sCenterGUID, senMnf.getName()), new Gson().toJson(senMnf));
             } else if (sensorType == SensorTypeKeys.SENS_GYROSCOPE) {
-                sensorGUID = GUIDUtil.getUUID();
+                sensorGUID = GUIDUtil.getGUID();
                 addSensorGUID(sensorGUID, sensorType, "x_speed");
                 senMnf.setName(sensor.getName()+"_X_Speed");
                 senMnf.setType("" + sensor.getType());
                 senMnf.setDescription("Gyroscope X-axis speed of a " + Build.MANUFACTURER + " " + Build.MODEL + " " + Build.USER + " Android device");
                 mqttClient.publishData(TopicUtil.getTopic(TopicUtil.TOPIC_TYPE_MNF, sCenterGUID, senMnf.getName()), new Gson().toJson(senMnf));
-                sensorGUID = GUIDUtil.getUUID();
+                sensorGUID = GUIDUtil.getGUID();
                 addSensorGUID(sensorGUID, sensorType, "y_speed");
                 senMnf.setName(sensor.getName()+"_Y_Speed");
                 senMnf.setType("" + sensor.getType());
                 senMnf.setDescription("Gyroscope Y-axis speed of a " + Build.MANUFACTURER + " " + Build.MODEL + " " + Build.USER + " Android device");
                 mqttClient.publishData(TopicUtil.getTopic(TopicUtil.TOPIC_TYPE_MNF, sCenterGUID, senMnf.getName()), new Gson().toJson(senMnf));
-                sensorGUID = GUIDUtil.getUUID();
+                sensorGUID = GUIDUtil.getGUID();
                 addSensorGUID(sensorGUID, sensorType, "z_speed");
                 senMnf.setName(sensor.getName()+"_Z_Speed");
                 senMnf.setType("" + sensor.getType());
                 senMnf.setDescription("Gyroscope Z-axis speed of a " + Build.MANUFACTURER + " " + Build.MODEL + " " + Build.USER + " Android device");
                 mqttClient.publishData(TopicUtil.getTopic(TopicUtil.TOPIC_TYPE_MNF, sCenterGUID, senMnf.getName()), new Gson().toJson(senMnf));
             } else if (sensorType == SensorTypeKeys.SENS_GYROSCOPE_UNCALIBRATED) {
-                sensorGUID = GUIDUtil.getUUID();
+                sensorGUID = GUIDUtil.getGUID();
                 addSensorGUID(sensorGUID, sensorType, "x_speed");
                 senMnf.setName(sensor.getName() + "_X_Speed");
                 senMnf.setType("" + sensor.getType());
                 senMnf.setDescription("Gyroscope Uncalibrated X-axis speed of a " + Build.MANUFACTURER + " " + Build.MODEL + " " + Build.USER + " Android device");
                 mqttClient.publishData(TopicUtil.getTopic(TopicUtil.TOPIC_TYPE_MNF, sCenterGUID, senMnf.getName()), new Gson().toJson(senMnf));
-                sensorGUID = GUIDUtil.getUUID();
+                sensorGUID = GUIDUtil.getGUID();
                 addSensorGUID(sensorGUID, sensorType, "y_speed");
                 senMnf.setName(sensor.getName() + "_Y_Speed");
                 senMnf.setType("" + sensor.getType());
                 senMnf.setDescription("Gyroscope Uncalibrated Y-axis speed of a " + Build.MANUFACTURER + " " + Build.MODEL + " " + Build.USER + " Android device");
                 mqttClient.publishData(TopicUtil.getTopic(TopicUtil.TOPIC_TYPE_MNF, sCenterGUID, senMnf.getName()), new Gson().toJson(senMnf));
-                sensorGUID = GUIDUtil.getUUID();
+                sensorGUID = GUIDUtil.getGUID();
                 addSensorGUID(sensorGUID, sensorType, "z_bias");
                 senMnf.setName(sensor.getName() + "_Z_Speed");
                 senMnf.setType("" + sensor.getType());
                 senMnf.setDescription("Gyroscope Uncalibrated Z-axis speed of a " + Build.MANUFACTURER + " " + Build.MODEL + " " + Build.USER + " Android device");
                 mqttClient.publishData(TopicUtil.getTopic(TopicUtil.TOPIC_TYPE_MNF, sCenterGUID, senMnf.getName()), new Gson().toJson(senMnf));
-                sensorGUID = GUIDUtil.getUUID();
+                sensorGUID = GUIDUtil.getGUID();
                 addSensorGUID(sensorGUID, sensorType, "x_drift");
                 senMnf.setName(sensor.getName() + "_X_Drift");
                 senMnf.setType("" + sensor.getType());
                 senMnf.setDescription("Gyroscope Uncalibrated X-axis drift of a " + Build.MANUFACTURER + " " + Build.MODEL + " " + Build.USER + " Android device");
                 mqttClient.publishData(TopicUtil.getTopic(TopicUtil.TOPIC_TYPE_MNF, sCenterGUID, senMnf.getName()), new Gson().toJson(senMnf));
-                sensorGUID = GUIDUtil.getUUID();
+                sensorGUID = GUIDUtil.getGUID();
                 addSensorGUID(sensorGUID, sensorType, "y_drift");
                 senMnf.setName(sensor.getName() + "_Y_Drift");
                 senMnf.setType("" + sensor.getType());
                 senMnf.setDescription("Gyroscope Uncalibrated Y-axis drift of a " + Build.MANUFACTURER + " " + Build.MODEL + " " + Build.USER + " Android device");
                 mqttClient.publishData(TopicUtil.getTopic(TopicUtil.TOPIC_TYPE_MNF, sCenterGUID, senMnf.getName()), new Gson().toJson(senMnf));
-                sensorGUID = GUIDUtil.getUUID();
+                sensorGUID = GUIDUtil.getGUID();
                 addSensorGUID(sensorGUID, sensorType, "z_drift");
                 senMnf.setName(sensor.getName() + "_Z_Drift");
                 senMnf.setType("" + sensor.getType());
                 senMnf.setDescription("Gyroscope Uncalibrated Z-axis drift of a " + Build.MANUFACTURER + " " + Build.MODEL + " " + Build.USER + " Android device");
                 mqttClient.publishData(TopicUtil.getTopic(TopicUtil.TOPIC_TYPE_MNF, sCenterGUID, senMnf.getName()), new Gson().toJson(senMnf));
             } else if (sensorType == SensorTypeKeys.SENS_HUMIDITY) {
-                sensorGUID = GUIDUtil.getUUID();
+                sensorGUID = GUIDUtil.getGUID();
                 addSensorGUID(sensorGUID, sensorType, "humidity");
                 senMnf.setName(sensor.getName());
                 senMnf.setType("" + sensor.getType());
                 senMnf.setDescription("Humidity of a " + Build.MANUFACTURER + " " + Build.MODEL + " " + Build.USER + " Android device");
                 mqttClient.publishData(TopicUtil.getTopic(TopicUtil.TOPIC_TYPE_MNF, sCenterGUID, senMnf.getName()), new Gson().toJson(senMnf));
             } else if (sensorType == SensorTypeKeys.SENS_HEARTRATE) {
-                sensorGUID = GUIDUtil.getUUID();
+                sensorGUID = GUIDUtil.getGUID();
                 addSensorGUID(sensorGUID, sensorType, "bpm");
                 senMnf.setName(sensor.getName());
                 senMnf.setType("" + sensor.getType());
                 senMnf.setDescription("Heartrate of a " + Build.MANUFACTURER + " " + Build.MODEL + " " + Build.USER + " Android device");
                 mqttClient.publishData(TopicUtil.getTopic(TopicUtil.TOPIC_TYPE_MNF, sCenterGUID, senMnf.getName()), new Gson().toJson(senMnf));
             } else if (sensorType == SensorTypeKeys.SENS_PRESSURE) {
-                sensorGUID = GUIDUtil.getUUID();
+                sensorGUID = GUIDUtil.getGUID();
                 addSensorGUID(sensorGUID, sensorType, "pressure");
                 senMnf.setName(sensor.getName());
                 senMnf.setType("" + sensor.getType());
                 senMnf.setDescription("Pressure of a " + Build.MANUFACTURER + " " + Build.MODEL + " " + Build.USER + " Android device");
                 mqttClient.publishData(TopicUtil.getTopic(TopicUtil.TOPIC_TYPE_MNF, sCenterGUID, senMnf.getName()), new Gson().toJson(senMnf));
             } else if (sensorType == SensorTypeKeys.SENS_PROXIMITY) {
-                sensorGUID = GUIDUtil.getUUID();
+                sensorGUID = GUIDUtil.getGUID();
                 addSensorGUID(sensorGUID, sensorType, "proximity");
                 senMnf.setName(sensor.getName());
                 senMnf.setType("" + sensor.getType());
                 senMnf.setDescription("Proximity of a " + Build.MANUFACTURER + " " + Build.MODEL + " " + Build.USER + " Android device");
                 mqttClient.publishData(TopicUtil.getTopic(TopicUtil.TOPIC_TYPE_MNF, sCenterGUID, senMnf.getName()), new Gson().toJson(senMnf));
             } else if (sensorType == SensorTypeKeys.SENS_STEP_COUNTER) {
-                sensorGUID = GUIDUtil.getUUID();
+                sensorGUID = GUIDUtil.getGUID();
                 addSensorGUID(sensorGUID, sensorType, "steps");
                 senMnf.setName(sensor.getName());
                 senMnf.setType("" + sensor.getType());
                 senMnf.setDescription("Step Counter of a " + Build.MANUFACTURER + " " + Build.MODEL + " " + Build.USER + " Android device");
                 mqttClient.publishData(TopicUtil.getTopic(TopicUtil.TOPIC_TYPE_MNF, sCenterGUID, senMnf.getName()), new Gson().toJson(senMnf));
             } else if (sensorType == SensorTypeKeys.SENS_STEP_DETECTOR) {
-                sensorGUID = GUIDUtil.getUUID();
+                sensorGUID = GUIDUtil.getGUID();
                 addSensorGUID(sensorGUID, sensorType, "stepped");
                 senMnf.setName(sensor.getName());
                 senMnf.setType("" + sensor.getType());
                 senMnf.setDescription("Step Detector of a " + Build.MANUFACTURER + " " + Build.MODEL + " " + Build.USER + " Android device");
                 mqttClient.publishData(TopicUtil.getTopic(TopicUtil.TOPIC_TYPE_MNF, sCenterGUID, senMnf.getName()), new Gson().toJson(senMnf));
             } else if (sensorType == SensorTypeKeys.SENS_SIGNIFICANT_MOTION) {
-                sensorGUID = GUIDUtil.getUUID();
+                sensorGUID = GUIDUtil.getGUID();
                 addSensorGUID(sensorGUID, sensorType, "moved");
                 senMnf.setName(sensor.getName());
                 senMnf.setType("" + sensor.getType());
@@ -729,7 +758,13 @@ public class SensorService extends Service implements SensorEventListener {
         }
     }
 
-    private void addSensorGUID(String GUID, int sensorType, String sensorValueName) {
+    /**
+     * Adds a sensors GUID to the helper map sensorMap.
+     * @param GUID sensor GUID
+     * @param sensorType sensor type
+     * @param sensorValueName value name description (e.g. "x" or "pressure")
+     */
+    public void addSensorGUID(String GUID, int sensorType, String sensorValueName) {
         HashMap<String, String> dataGUIDmap = new HashMap<>();
         if (sensorMap.containsKey(sensorType)) {
             dataGUIDmap = (HashMap<String,String>) sensorMap.get(sensorType);
@@ -738,7 +773,13 @@ public class SensorService extends Service implements SensorEventListener {
         sensorMap.put(sensorType, dataGUIDmap);
     }
 
-    private String getSensorGUID(int sensorType, String sensorValueName) {
+    /**
+     * Getting the GUID from a already registered sensor out the helper map sensorMap.
+     * @param sensorType sensor type
+     * @param sensorValueName value name description (e.g. "y" or "proximity")
+     * @return
+     */
+    public String getSensorGUID(int sensorType, String sensorValueName) {
         if (sensorMap.containsKey(sensorType)) {
             if (((HashMap<String,String>)sensorMap.get(sensorType)).containsKey(sensorValueName)) {
                 return ((HashMap<String,String>)sensorMap.get(sensorType)).get(sensorValueName);
@@ -747,6 +788,11 @@ public class SensorService extends Service implements SensorEventListener {
         return null;
     }
 
+    /**
+     * Changes latency on a sensor.
+     * @param sensor sensor
+     * @param latency latency value
+     */
     public void setDelay(Sensor sensor, int latency) {
         if (sensor != null) {
             mSensorManager.registerListener(this, sensor, latency, latency);
@@ -755,6 +801,14 @@ public class SensorService extends Service implements SensorEventListener {
         }
     }
 
+    /**
+     * Sends the sensor data to the connected MQTT Broker.
+     * It filters out data from the same sensor within 200 millis, protecting the mqttClient overwhelming the network.
+     * This method starts a executorService in the background, not blocking the application while sending the data.
+     * @param sensorType sensor type
+     * @param sensorGUID sensor GUID
+     * @param values sensor value
+     */
     public void sendSensorData(final int sensorType, final String sensorGUID, final String values) {
         long t = System.currentTimeMillis();
 
@@ -762,11 +816,7 @@ public class SensorService extends Service implements SensorEventListener {
         long timeAgo = t - lastTimestamp;
 
         if (lastTimestamp != 0) {
-            if (filterId == sensorType && timeAgo < 100) {
-                return;
-            }
-
-            if (filterId != sensorType && timeAgo < 100) {
+            if (timeAgo < 200) {
                 return;
             }
         }
@@ -781,23 +831,37 @@ public class SensorService extends Service implements SensorEventListener {
         });
     }
 
-    public void setSensorFilter(int filterId) {
-        Log.d(TAG, "Now filtering by sensor: " + filterId);
-
-        this.filterId = filterId;
-    }
-
+    /**
+     * Publishes sensor data to the MQTT broker.
+     * It is called by the executor Thread out of method sendSensorData().
+     * @param sensorType sensor type
+     * @param sensorGUID sensor GUID
+     * @param values sensor values
+     */
     private void sendSensorDataInBackground(int sensorType, String sensorGUID, String values) {
-        if (sensorType == filterId) {
-            Log.i(TAG, "Sensor " + sensorType + " " + sensorGUID + " = " + values.toString());
-        } else {
-            Log.d(TAG, "Sensor " + sensorType + " " + sensorGUID + " = " + values.toString());
-        }
+        Log.d(TAG, "Sensor " + sensorType + " " + sensorGUID + " = " + values.toString());
 
         mqttClient.publishData(TopicUtil.getTopic(TopicUtil.TOPIC_TYPE_DAT, sCenterGUID, sensorGUID), values);
 
     }
 
+    /**
+     * Starts a listener of the stated sensor and registers it to siot.net.
+     * @param sensor sensor
+     */
+    public void startListener(Sensor sensor) {
+        if (sensor != null) {
+            registerSensor(sensor);
+            mSensorManager.registerListener(this, sensor, SensorManager.SENSOR_DELAY_NORMAL);
+        } else {
+            Log.w(TAG, "No "+sensor.getName()+" found");
+        }
+    }
+
+    /**
+     * Stops a listener of the stated sensor.
+     * @param sensor sensor
+     */
     public void stopListener(Sensor sensor) {
         if (sensor != null) {
             mSensorManager.unregisterListener(this, sensor);
