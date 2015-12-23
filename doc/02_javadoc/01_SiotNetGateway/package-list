@@ -1,0 +1,5 @@
+net.siot.android.gateway
+net.siot.android.gateway.connection
+net.siot.android.gateway.messagetypes
+net.siot.android.gateway.service
+net.siot.android.gateway.util
