@@ -37,16 +37,15 @@ import net.siot.android.gateway.util.TopicUtil;
  */
 public class PhoneSensorPublisherActivity extends AppCompatActivity implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener{
 
-    //SensorService sensorService;
-    //MQTTClient mqttClient;
-    public String sBrokerURL;
-    public String sMQTTTopicPrefix;
-    public String sClientIdPrefix;
-    public String sGatewayGUID;
+    private final static String MSG_PATH_SEND_DATA = "sendMessage";
+    private final static String MSG_PATH_CONNECT = "connectToSiot";
+    private final static String MSG_PATH_DISCONNECT = "disconnectFromSiot";
+    private final static String MSG_PATH_START_APP = "startPhoneSensorPublisher";
+
     public String sLicense;
-    public String sURLServiceURL;
 
     private GoogleApiClient googleApiClient = null;
+    private String sGAnodeId = null;
 
     //Switches
     private Switch accelerometerSwitch;
@@ -78,8 +77,6 @@ public class PhoneSensorPublisherActivity extends AppCompatActivity implements G
     private Button buttonConnectBroker;
 
     private TextView textViewConnectionInfo;
-
-
 
     private boolean isAccelerometerON;
     private boolean isMagneticFieldON;
@@ -168,6 +165,9 @@ public class PhoneSensorPublisherActivity extends AppCompatActivity implements G
                     buttonConnectBroker.setText("Connect");
                     editTextLicense.setVisibility(editTextLicense.VISIBLE);
                     disableSensorSwitches();
+                    if (sGAnodeId != null && !sGAnodeId.equals("")) {
+                        Wearable.MessageApi.sendMessage(googleApiClient, sGAnodeId, MSG_PATH_DISCONNECT, null);
+                    }
                 } else {
                     Toast.makeText(getApplicationContext(), "Please enter your siot.net license", Toast.LENGTH_SHORT).show();
                 }
@@ -765,9 +765,6 @@ public class PhoneSensorPublisherActivity extends AppCompatActivity implements G
      */
     public class MessageReceiver extends BroadcastReceiver {
 
-        private final static String MSG_PATH_SEND_DATA = "sendMessage";
-        private final static String MSG_PATH_CONNECT = "connectToSiot";
-
         /**
          * Action which will be done when a message is received.</br>
          * Paths:</br>
@@ -790,8 +787,12 @@ public class PhoneSensorPublisherActivity extends AppCompatActivity implements G
                     buttonConnectBroker.performClick();
 
                 Log.i(TAG, "Source NodeId: "+intent.getStringExtra("nodeId"));
-                Wearable.MessageApi.sendMessage(googleApiClient, intent.getStringExtra("nodeId"), MSG_PATH_CONNECT, sLicense.getBytes());
+                sGAnodeId = intent.getStringExtra("nodeId");
+                Wearable.MessageApi.sendMessage(googleApiClient, sGAnodeId, MSG_PATH_CONNECT, sLicense.getBytes());
+                Toast.makeText(getApplicationContext(), "Android Wear device connected.", Toast.LENGTH_SHORT).show();
 
+            } else if (path.equals(MSG_PATH_DISCONNECT)) {
+                Toast.makeText(getApplicationContext(), "Android Wear device disconnected.", Toast.LENGTH_SHORT).show();
             } else if (path.equals(MSG_PATH_SEND_DATA)) {
 
                 //Toast.makeText(getApplicationContext(), "Send data to siot.net", Toast.LENGTH_SHORT).show();

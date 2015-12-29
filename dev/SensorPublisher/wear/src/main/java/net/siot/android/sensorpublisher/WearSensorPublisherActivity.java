@@ -38,6 +38,7 @@ public class WearSensorPublisherActivity extends Activity implements GoogleApiCl
     private final static long CONNECTION_TIME_OUT_MS = 100;
     private final static String MSG_PATH_SEND_DATA = "sendMessage";
     private final static String MSG_PATH_CONNECT = "connectToSiot";
+    private final static String MSG_PATH_DISCONNECT = "disconnectFromSiot";
     private final static String MSG_PATH_START_APP = "startPhoneSensorPublisher";
 
     private LinearLayout linearLayoutSensorSwitches;
@@ -149,7 +150,8 @@ public class WearSensorPublisherActivity extends Activity implements GoogleApiCl
                             //linearLayoutSensorSwitches.setVisibility(linearLayoutSensorSwitches.VISIBLE);
                         } else if (isConnected) {
                             isConnected = false;
-                            buttonConnectBroker.setText("Connect");
+                            buttonConnectBroker.setText("Connect to siot.net");
+                            Wearable.MessageApi.sendMessage(googleApiClient, sGAnodeId, MSG_PATH_DISCONNECT, null);
                             //editTextLicense.setVisibility(editTextLicense.VISIBLE);
                             disableSensorSwitches();
                         } else {
@@ -714,14 +716,12 @@ public class WearSensorPublisherActivity extends Activity implements GoogleApiCl
      */
     public class MessageReceiver extends BroadcastReceiver {
 
-        private final static String MSG_PATH_SEND_DATA = "sendMessage";
-        private final static String MSG_PATH_CONNECT = "connectToSiot";
-
         /**
          * Action which will be done when a message is received.</br>
          * Paths:</br>
          *     sendMessage : triggers the action to generate a toast which says that data is sent from wearable device</br>
          *     connectToSiot : triggers an action which connects the android wear device to the mobile. That is connected to siot.net MQTT broker.
+         *     disconnectFromSiot: trigger an action which disables all sensor on the wearable. Shows the login screen.
          * @param context activity context
          * @param intent received message intent
          */
@@ -739,6 +739,10 @@ public class WearSensorPublisherActivity extends Activity implements GoogleApiCl
                 enableSensorSwitches();
                 Log.i(TAG, "Source NodeId: " + intent.getStringExtra("nodeId"));
 
+            } else if (path.equals(MSG_PATH_DISCONNECT)) {
+                isConnected = false;
+                buttonConnectBroker.setText("Connect to siot.net");
+                disableSensorSwitches();
             } else if (path.equals(MSG_PATH_SEND_DATA)) {
 
                 Toast.makeText(getApplicationContext(), "Send pass-through data to mobile gateway", Toast.LENGTH_SHORT).show();
