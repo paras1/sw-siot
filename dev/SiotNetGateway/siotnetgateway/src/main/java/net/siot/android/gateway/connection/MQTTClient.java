@@ -4,11 +4,11 @@ import android.content.Context;
 import android.util.Log;
 import android.widget.Toast;
 
-import net.siot.android.gateway.util.TopicUtil;
+import net.siot.android.gateway.util.GUIDUtil;
 
 import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
+import org.eclipse.paho.client.mqttv3.MqttAsyncClient;
 import org.eclipse.paho.client.mqttv3.MqttCallback;
-import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
@@ -27,7 +27,7 @@ public class MQTTClient implements MqttCallback {
     private String sBrokerURL;
     private String sGUID;
 
-    private MqttClient mqttClient;
+    private MqttAsyncClient mqttClient;
 
     private Context ctx;
 
@@ -42,10 +42,11 @@ public class MQTTClient implements MqttCallback {
     public void connectBroker() {
         try {
             MemoryPersistence persistence = new MemoryPersistence();
-            mqttClient = new MqttClient(sBrokerURL, sGUID, persistence);
+            mqttClient = new MqttAsyncClient(sBrokerURL, sGUID+"_"+GUIDUtil.getGUID(), persistence);
             MqttConnectOptions options = new MqttConnectOptions();
             options.setCleanSession(false);
             mqttClient.connect(options);
+            mqttClient.setCallback(this);
             Log.i(TAG, "CONNECTED to MQTT broker");
             Log.i(TAG, "MQTT ClientId is: " + mqttClient.getClientId());
         } catch (MqttException e) {
@@ -74,11 +75,10 @@ public class MQTTClient implements MqttCallback {
         }
     }
 
-    private void subscribeData(int topicType, String GUID) {
+    public void subscribeData(String topic) {
         if (mqttClient != null && mqttClient.isConnected()) {
             try{
-                mqttClient.setCallback(this);
-                mqttClient.subscribe(TopicUtil.getTopic(topicType, GUID));
+                mqttClient.subscribe(topic, 2);
             } catch (Exception e) {
                 Log.e(TAG, e.getMessage(), e);
             }

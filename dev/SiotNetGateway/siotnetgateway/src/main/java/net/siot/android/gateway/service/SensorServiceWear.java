@@ -10,7 +10,6 @@ import android.hardware.SensorManager;
 import android.os.Build;
 import android.os.IBinder;
 import android.util.Log;
-import android.util.SparseLongArray;
 
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.wearable.Wearable;
@@ -26,8 +25,6 @@ import net.siot.android.gateway.util.TopicUtil;
 import java.util.HashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 
 
 /**
@@ -62,7 +59,7 @@ public class SensorServiceWear extends Service implements SensorEventListener {
     public Sensor stepCounterSensor;
     public Sensor stepDetectorSensor;
 
-    HashMap sensorMap = new HashMap<Integer, HashMap<String, String>>();
+    HashMap<Integer, HashMap<String, String>> sensorMap = new HashMap();
 
     Context ctx;
     GoogleApiClient googleApiClient;
@@ -70,7 +67,7 @@ public class SensorServiceWear extends Service implements SensorEventListener {
 
     private String sCenterGUID;
 
-    private SparseLongArray lastSensorData;
+    private HashMap<String, Long> lastSensorData;
     private ExecutorService executorService;
 
     /**
@@ -88,7 +85,7 @@ public class SensorServiceWear extends Service implements SensorEventListener {
         this.sGANodeId = sGANodeId;
 
         executorService = Executors.newCachedThreadPool();
-        lastSensorData = new SparseLongArray();
+        lastSensorData = new HashMap<>();
 
         mSensorManager = ((SensorManager) ctx.getSystemService(Context.SENSOR_SERVICE));
 
@@ -117,148 +114,127 @@ public class SensorServiceWear extends Service implements SensorEventListener {
 
     /**
      * Starts all listeners of available sensors on the device.
-     * The correct connection to the siot.net is TODO.
      */
     public void startAllListeners() {
 
         //Register sensor listeners
         if (mSensorManager != null) {
             if (accelerometerSensor != null) {
-                mSensorManager.registerListener(this, accelerometerSensor, SensorManager.SENSOR_DELAY_NORMAL);
+                startListener(accelerometerSensor);
             } else {
                 Log.w(TAG, "No Accelerometer found");
             }
 
             if (ambientTemperatureSensor != null) {
-                mSensorManager.registerListener(this, ambientTemperatureSensor, SensorManager.SENSOR_DELAY_NORMAL);
+                startListener(ambientTemperatureSensor);
             } else {
                 Log.w(TAG, "Ambient Temperature Sensor not found");
             }
 
             if (gameRotationVectorSensor != null) {
-                mSensorManager.registerListener(this, gameRotationVectorSensor, SensorManager.SENSOR_DELAY_NORMAL);
+                startListener(gameRotationVectorSensor);
             } else {
                 Log.w(TAG, "Gaming Rotation Vector Sensor not found");
             }
 
             if (geomagneticSensor != null) {
-                mSensorManager.registerListener(this, geomagneticSensor, SensorManager.SENSOR_DELAY_NORMAL);
+                startListener(geomagneticSensor);
             } else {
                 Log.w(TAG, "No Geomagnetic Sensor found");
             }
 
             if (gravitySensor != null) {
-                mSensorManager.registerListener(this, gravitySensor, SensorManager.SENSOR_DELAY_NORMAL);
+                startListener(gravitySensor);
             } else {
                 Log.w(TAG, "No Gravity Sensor");
             }
 
             if (gyroscopeSensor != null) {
-                mSensorManager.registerListener(this, gyroscopeSensor, SensorManager.SENSOR_DELAY_NORMAL);
+                startListener(gyroscopeSensor);
             } else {
                 Log.w(TAG, "No Gyroscope Sensor found");
             }
 
             if (gyroscopeUncalibratedSensor != null) {
-                mSensorManager.registerListener(this, gyroscopeUncalibratedSensor, SensorManager.SENSOR_DELAY_NORMAL);
+                startListener(gyroscopeUncalibratedSensor);
             } else {
                 Log.w(TAG, "No Uncalibrated Gyroscope Sensor found");
             }
 
             if (heartrateSensor != null) {
-                final int measurementDuration   = 10;   // Seconds
-                final int measurementBreak      = 5;    // Seconds
-
-                ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
-                scheduler.scheduleAtFixedRate(
-                        new Runnable() {
-                            @Override
-                            public void run() {
-                                Log.d(TAG, "register Heartrate Sensor");
-                                mSensorManager.registerListener(SensorServiceWear.this, heartrateSensor, SensorManager.SENSOR_DELAY_NORMAL);
-
-                                try {
-                                    Thread.sleep(measurementDuration * 1000);
-                                } catch (InterruptedException e) {
-                                    Log.e(TAG, "Interrupted while waitting to unregister Heartrate Sensor");
-                                }
-
-                                Log.d(TAG, "unregister Heartrate Sensor");
-                                mSensorManager.unregisterListener(SensorServiceWear.this, heartrateSensor);
-                            }
-                        }, 3, measurementDuration + measurementBreak, TimeUnit.SECONDS);
+                startListener(heartrateSensor);
             } else {
                 Log.d(TAG, "No Heartrate Sensor found");
             }
 
             if (heartrateSamsungSensor != null) {
-                mSensorManager.registerListener(this, heartrateSamsungSensor, SensorManager.SENSOR_DELAY_FASTEST);
+                startListener(heartrateSamsungSensor);
             } else {
                 Log.d(TAG, "No Samsungs Heartrate Sensor found");
             }
 
             if (lightSensor != null) {
-                mSensorManager.registerListener(this, lightSensor, SensorManager.SENSOR_DELAY_NORMAL);
+                startListener(lightSensor);
             } else {
                 Log.d(TAG, "No Light Sensor found");
             }
 
             if (linearAccelerationSensor != null) {
-                mSensorManager.registerListener(this, linearAccelerationSensor, SensorManager.SENSOR_DELAY_NORMAL);
+                startListener(linearAccelerationSensor);
             } else {
                 Log.d(TAG, "No Linear Acceleration Sensor found");
             }
 
             if (magneticFieldSensor != null) {
-                mSensorManager.registerListener(this, magneticFieldSensor, SensorManager.SENSOR_DELAY_NORMAL);
+                startListener(magneticFieldSensor);
             } else {
                 Log.d(TAG, "No Magnetic Field Sensor found");
             }
 
             if (magneticFieldUncalibratedSensor != null) {
-                mSensorManager.registerListener(this, magneticFieldUncalibratedSensor, SensorManager.SENSOR_DELAY_NORMAL);
+                startListener(magneticFieldUncalibratedSensor);
             } else {
                 Log.d(TAG, "No uncalibrated Magnetic Field Sensor found");
             }
 
             if (pressureSensor != null) {
-                mSensorManager.registerListener(this, pressureSensor, SensorManager.SENSOR_DELAY_NORMAL);
+                startListener(pressureSensor);
             } else {
                 Log.d(TAG, "No Pressure Sensor found");
             }
 
             if (proximitySensor != null) {
-                mSensorManager.registerListener(this, proximitySensor, SensorManager.SENSOR_DELAY_NORMAL);
+                startListener(proximitySensor);
             } else {
                 Log.d(TAG, "No Proximity Sensor found");
             }
 
             if (humiditySensor != null) {
-                mSensorManager.registerListener(this, humiditySensor, SensorManager.SENSOR_DELAY_NORMAL);
+                startListener(humiditySensor);
             } else {
                 Log.d(TAG, "No Humidity Sensor found");
             }
 
             if (rotationVectorSensor != null) {
-                mSensorManager.registerListener(this, rotationVectorSensor, SensorManager.SENSOR_DELAY_NORMAL);
+                startListener(rotationVectorSensor);
             } else {
                 Log.d(TAG, "No Rotation Vector Sensor found");
             }
 
             if (significantMotionSensor != null) {
-                mSensorManager.registerListener(this, significantMotionSensor, SensorManager.SENSOR_DELAY_NORMAL);
+                startListener(significantMotionSensor);
             } else {
                 Log.d(TAG, "No Significant Motion Sensor found");
             }
 
             if (stepCounterSensor != null) {
-                mSensorManager.registerListener(this, stepCounterSensor, SensorManager.SENSOR_DELAY_NORMAL);
+                startListener(stepCounterSensor);
             } else {
                 Log.d(TAG, "No Step Counter Sensor found");
             }
 
             if (stepDetectorSensor != null) {
-                mSensorManager.registerListener(this, stepDetectorSensor, SensorManager.SENSOR_DELAY_NORMAL);
+                startListener(stepDetectorSensor);
             } else {
                 Log.d(TAG, "No Step Detector Sensor found");
             }
@@ -294,125 +270,124 @@ public class SensorServiceWear extends Service implements SensorEventListener {
                 senDat.setType("float");
                 senDat.setTime(sensorEvent.timestamp);
                 senDat.setData("" + values[0]);
-                sendSensorData(sensorType, getSensorGUID(sensorType, "x"), new Gson().toJson(senDat));
+                sendSensorData(sensorType, getSensorGUID(sensorType, "x"), senDat.getData());
                 senDat.setTime(sensorEvent.timestamp);
                 senDat.setData(""+values[1]);
-                sendSensorData(sensorType, getSensorGUID(sensorType, "y"), new Gson().toJson(senDat));
+                sendSensorData(sensorType, getSensorGUID(sensorType, "y"), senDat.getData());
                 senDat.setTime(sensorEvent.timestamp);
                 senDat.setData(""+values[2]);
-                sendSensorData(sensorType, getSensorGUID(sensorType, "z"), new Gson().toJson(senDat));
+                sendSensorData(sensorType, getSensorGUID(sensorType, "z"), senDat.getData());
             } else if (sensorType == SensorTypeKeys.SENS_MAGNETIC_FIELD_UNCALIBRATED) {
                 senDat.setType("float");
                 senDat.setTime(sensorEvent.timestamp);
                 senDat.setData(""+values[0]);
-                sendSensorData(sensorType, getSensorGUID(sensorType, "x"), new Gson().toJson(senDat));
+                sendSensorData(sensorType, getSensorGUID(sensorType, "x"), senDat.getData());
                 senDat.setTime(sensorEvent.timestamp);
                 senDat.setData(""+values[1]);
-                sendSensorData(sensorType, getSensorGUID(sensorType, "y"), new Gson().toJson(senDat));
+                sendSensorData(sensorType, getSensorGUID(sensorType, "y"), senDat.getData());
                 senDat.setTime(sensorEvent.timestamp);
                 senDat.setData(""+values[2]);
-                sendSensorData(sensorType, getSensorGUID(sensorType, "z"), new Gson().toJson(senDat));
+                sendSensorData(sensorType, getSensorGUID(sensorType, "z"), senDat.getData());
                 senDat.setTime(sensorEvent.timestamp);
                 senDat.setData(""+values[3]);
-                sendSensorData(sensorType, getSensorGUID(sensorType, "x_bias"), new Gson().toJson(senDat));
+                sendSensorData(sensorType, getSensorGUID(sensorType, "x_bias"), senDat.getData());
                 senDat.setTime(sensorEvent.timestamp);
                 senDat.setData(""+values[4]);
-                sendSensorData(sensorType, getSensorGUID(sensorType, "y_bias"), new Gson().toJson(senDat));
+                sendSensorData(sensorType, getSensorGUID(sensorType, "y_bias"), senDat.getData());
                 senDat.setTime(sensorEvent.timestamp);
                 senDat.setData(""+values[5]);
-                sendSensorData(sensorType, getSensorGUID(sensorType, "z_bias"), new Gson().toJson(senDat));
+                sendSensorData(sensorType, getSensorGUID(sensorType, "z_bias"), senDat.getData());
             } else if (sensorType == SensorTypeKeys.SENS_AMBIENT_TEMPERATURE) {
                 senDat.setType("float");
                 senDat.setTime(sensorEvent.timestamp);
                 senDat.setData(""+values[0]);
-                sendSensorData(sensorType, getSensorGUID(sensorType, "temp"), new Gson().toJson(senDat));
+                sendSensorData(sensorType, getSensorGUID(sensorType, "temp"), senDat.getData());
             } else if (sensorType == SensorTypeKeys.SENS_GAME_ROTATION_VECTOR ||
                     sensorType == SensorTypeKeys.SENS_ROTATION_VECTOR) {
                 senDat.setType("float");
                 senDat.setTime(sensorEvent.timestamp);
                 senDat.setData(""+values[0]);
-                sendSensorData(sensorType, getSensorGUID(sensorType, "x"), new Gson().toJson(senDat));
+                sendSensorData(sensorType, getSensorGUID(sensorType, "x"), senDat.getData());
                 senDat.setTime(sensorEvent.timestamp);
                 senDat.setData(""+values[1]);
-                sendSensorData(sensorType, getSensorGUID(sensorType, "y"), new Gson().toJson(senDat));
+                sendSensorData(sensorType, getSensorGUID(sensorType, "y"), senDat.getData());
                 senDat.setTime(sensorEvent.timestamp);
                 senDat.setData(""+values[2]);
-                sendSensorData(sensorType, getSensorGUID(sensorType, "z"), new Gson().toJson(senDat));
+                sendSensorData(sensorType, getSensorGUID(sensorType, "z"), senDat.getData());
                 senDat.setTime(sensorEvent.timestamp);
                 senDat.setData(""+values[3]);
-                sendSensorData(sensorType, getSensorGUID(sensorType, "half_angle"), new Gson().toJson(senDat));
+                sendSensorData(sensorType, getSensorGUID(sensorType, "half_angle"), senDat.getData());
                 senDat.setTime(sensorEvent.timestamp);
                 senDat.setData(""+values[4]);
-                sendSensorData(sensorType, getSensorGUID(sensorType, "est_head_acc"), new Gson().toJson(senDat));
+                sendSensorData(sensorType, getSensorGUID(sensorType, "est_head_acc"), senDat.getData());
             } else if (sensorType == SensorTypeKeys.SENS_GEOMAGNETIC) {
                 //TODO
             } else if (sensorType == SensorTypeKeys.SENS_LIGHT) {
                 senDat.setType("float");
                 senDat.setTime(sensorEvent.timestamp);
                 senDat.setData(""+values[0]);
-                sendSensorData(sensorType, getSensorGUID(sensorType, "lux"), new Gson().toJson(senDat));
+                sendSensorData(sensorType, getSensorGUID(sensorType, "lux"), senDat.getData());
             } else if (sensorType == SensorTypeKeys.SENS_GYROSCOPE) {
                 senDat.setType("float");
                 senDat.setTime(sensorEvent.timestamp);
                 senDat.setData(""+values[0]);
-                sendSensorData(sensorType, getSensorGUID(sensorType, "x_speed"), new Gson().toJson(senDat));
+                sendSensorData(sensorType, getSensorGUID(sensorType, "x_speed"), senDat.getData());
                 senDat.setTime(sensorEvent.timestamp);
                 senDat.setData(""+values[1]);
-                sendSensorData(sensorType, getSensorGUID(sensorType, "y_speed"), new Gson().toJson(senDat));
+                sendSensorData(sensorType, getSensorGUID(sensorType, "y_speed"), senDat.getData());
                 senDat.setTime(sensorEvent.timestamp);
                 senDat.setData(""+values[2]);
-                sendSensorData(sensorType, getSensorGUID(sensorType, "z_speed"), new Gson().toJson(senDat));
+                sendSensorData(sensorType, getSensorGUID(sensorType, "z_speed"), senDat.getData());
             } else if (sensorType == SensorTypeKeys.SENS_GYROSCOPE_UNCALIBRATED) {
                 senDat.setType("float");
                 senDat.setTime(sensorEvent.timestamp);
                 senDat.setData(""+values[0]);
-                sendSensorData(sensorType, getSensorGUID(sensorType, "x_speed"), new Gson().toJson(senDat));
+                sendSensorData(sensorType, getSensorGUID(sensorType, "x_speed"), senDat.getData());
                 senDat.setTime(sensorEvent.timestamp);
                 senDat.setData(""+values[1]);
-                sendSensorData(sensorType, getSensorGUID(sensorType, "y_speed"), new Gson().toJson(senDat));
+                sendSensorData(sensorType, getSensorGUID(sensorType, "y_speed"), senDat.getData());
                 senDat.setTime(sensorEvent.timestamp);
                 senDat.setData(""+values[2]);
-                sendSensorData(sensorType, getSensorGUID(sensorType, "z_speed"), new Gson().toJson(senDat));
+                sendSensorData(sensorType, getSensorGUID(sensorType, "z_speed"), senDat.getData());
                 senDat.setTime(sensorEvent.timestamp);
                 senDat.setData(""+values[3]);
-                sendSensorData(sensorType, getSensorGUID(sensorType, "x_drift"), new Gson().toJson(senDat));
+                sendSensorData(sensorType, getSensorGUID(sensorType, "x_drift"), senDat.getData());
                 senDat.setTime(sensorEvent.timestamp);
                 senDat.setData(""+values[4]);
-                sendSensorData(sensorType, getSensorGUID(sensorType, "y_drift"), new Gson().toJson(senDat));
+                sendSensorData(sensorType, getSensorGUID(sensorType, "y_drift"), senDat.getData());
                 senDat.setTime(sensorEvent.timestamp);
                 senDat.setData(""+values[5]);
-                sendSensorData(sensorType, getSensorGUID(sensorType, "z_drift"), new Gson().toJson(senDat));
+                sendSensorData(sensorType, getSensorGUID(sensorType, "z_drift"), senDat.getData());
             } else if (sensorType == SensorTypeKeys.SENS_HUMIDITY) {
                 senDat.setType("float");
                 senDat.setTime(sensorEvent.timestamp);
                 senDat.setData(""+values[0]);
-                sendSensorData(sensorType, getSensorGUID(sensorType, "humidity"), new Gson().toJson(senDat));
+                sendSensorData(sensorType, getSensorGUID(sensorType, "humidity"), senDat.getData());
             } else if (sensorType == SensorTypeKeys.SENS_HEARTRATE) {
-                //sensorValuesJSON.put("")
-                Log.i(TAG, "Values size HEARTRATE: " + values.length);
-                for (int i = 0; i < values.length; i++) {
-                    Log.i(TAG, "Values HEARTRATE"+i+": "+ ""+values[i]);
-                }
+                senDat.setType("float");
+                senDat.setTime(sensorEvent.timestamp);
+                senDat.setData(""+values[0]);
+                sendSensorData(sensorType, getSensorGUID(sensorType, "heartrate"), senDat.getData());
             } else if (sensorType == SensorTypeKeys.SENS_PRESSURE) {
                 senDat.setType("float");
                 senDat.setTime(sensorEvent.timestamp);
                 senDat.setData(""+values[0]);
-                sendSensorData(sensorType, getSensorGUID(sensorType, "pressure"), new Gson().toJson(senDat));
+                sendSensorData(sensorType, getSensorGUID(sensorType, "pressure"), senDat.getData());
             } else if (sensorType == SensorTypeKeys.SENS_PROXIMITY) {
                 senDat.setType("float");
                 senDat.setTime(sensorEvent.timestamp);
                 senDat.setData(""+values[0]);
-                sendSensorData(sensorType, getSensorGUID(sensorType, "proximity"), new Gson().toJson(senDat));
+                sendSensorData(sensorType, getSensorGUID(sensorType, "proximity"), senDat.getData());
             } else if (sensorType == SensorTypeKeys.SENS_STEP_COUNTER) {
                 senDat.setType("float");
                 senDat.setTime(sensorEvent.timestamp);
                 senDat.setData(""+values[0]);
-                sendSensorData(sensorType, getSensorGUID(sensorType, "steps"), new Gson().toJson(senDat));
+                sendSensorData(sensorType, getSensorGUID(sensorType, "steps"), senDat.getData());
             } else if (sensorType == SensorTypeKeys.SENS_STEP_DETECTOR) {
                 senDat.setType("boolean");
                 senDat.setTime(sensorEvent.timestamp);
                 senDat.setData("true");
-                sendSensorData(sensorType, getSensorGUID(sensorType, "stepped"), new Gson().toJson(senDat));
+                sendSensorData(sensorType, getSensorGUID(sensorType, "stepped"), senDat.getData());
             } else if (sensorType == SensorTypeKeys.SENS_SIGNIFICANT_MOTION) {
                 //sensorValuesJSON.put("")
                 Log.i(TAG, "Values size SIGNIFICANT_MOTION: " + values.length);
@@ -462,301 +437,345 @@ public class SensorServiceWear extends Service implements SensorEventListener {
             SensorActorManifest senMnf = new SensorActorManifest();
             String sensorGUID;
             if (sensorType == SensorTypeKeys.SENS_ACCELEROMETER) {
-                sensorGUID = GUIDUtil.getGUID();
-                addSensorGUID(sensorGUID, sensorType, "x");
-                senMnf.setName(sensor.getName() + "_X");
-                senMnf.setType("" + sensor.getType());
-                senMnf.setDescription("Accelerometer X-axis of a " + Build.MANUFACTURER + " " + Build.MODEL + " " + Build.USER + " Android device");
-                sendMessageToMobile(TopicUtil.getTopic(TopicUtil.TOPIC_TYPE_MNF, sCenterGUID, sensorGUID), new Gson().toJson(senMnf));
-                sensorGUID = GUIDUtil.getGUID();
-                addSensorGUID(sensorGUID, sensorType, "y");
-                senMnf.setName(sensor.getName() + "_Y");
-                senMnf.setType("" + sensor.getType());
-                senMnf.setDescription("Accelerometer Y-axis of a " + Build.MANUFACTURER + " " + Build.MODEL + " " + Build.USER + " Android device");
-                sendMessageToMobile(TopicUtil.getTopic(TopicUtil.TOPIC_TYPE_MNF, sCenterGUID, sensorGUID), new Gson().toJson(senMnf));
-                sensorGUID = GUIDUtil.getGUID();
-                addSensorGUID(sensorGUID, sensorType, "z");
-                senMnf.setName(sensor.getName()+"_Z");
-                senMnf.setType("" + sensor.getType());
-                senMnf.setDescription("Accelerometer Z-axis of a " + Build.MANUFACTURER + " " + Build.MODEL + " " + Build.USER + " Android device");
-                sendMessageToMobile(TopicUtil.getTopic(TopicUtil.TOPIC_TYPE_MNF, sCenterGUID, sensorGUID), new Gson().toJson(senMnf));
+                sensorGUID = getSensorGUID(sensorType, "x");
+                if (sensorGUID == null || sensorGUID.equals("")) {
+                    senMnf.setType("sensor");
+                    senMnf.setValueType("float");
+                    sensorGUID = GUIDUtil.getGUID();
+                    addSensorGUID(sensorGUID, sensorType, "x");
+                    senMnf.setName(sensor.getName() + "_X");
+                    senMnf.setDescription("Accelerometer X-axis of a " + Build.MANUFACTURER + " " + Build.MODEL + " Android device");
+                    sendMessageToMobile(TopicUtil.getTopic(TopicUtil.TOPIC_TYPE_MNF, sCenterGUID, sensorGUID), new Gson().toJson(senMnf));
+                    sensorGUID = GUIDUtil.getGUID();
+                    addSensorGUID(sensorGUID, sensorType, "y");
+                    senMnf.setName(sensor.getName() + "_Y");
+                    senMnf.setDescription("Accelerometer Y-axis of a " + Build.MANUFACTURER + " " + Build.MODEL + " Android device");
+                    sendMessageToMobile(TopicUtil.getTopic(TopicUtil.TOPIC_TYPE_MNF, sCenterGUID, sensorGUID), new Gson().toJson(senMnf));
+                    sensorGUID = GUIDUtil.getGUID();
+                    addSensorGUID(sensorGUID, sensorType, "z");
+                    senMnf.setName(sensor.getName() + "_Z");
+                    senMnf.setDescription("Accelerometer Z-axis of a " + Build.MANUFACTURER + " " + Build.MODEL + " Android device");
+                    sendMessageToMobile(TopicUtil.getTopic(TopicUtil.TOPIC_TYPE_MNF, sCenterGUID, sensorGUID), new Gson().toJson(senMnf));
+                }
             } else if (sensorType == SensorTypeKeys.SENS_GRAVITY) {
-                sensorGUID = GUIDUtil.getGUID();
-                addSensorGUID(sensorGUID, sensorType, "x");
-                senMnf.setName(sensor.getName()+"_X");
-                senMnf.setType("" + sensor.getType());
-                senMnf.setDescription("Gravitation X-axis of a " + Build.MANUFACTURER + " " + Build.MODEL + " " + Build.USER + " Android device");
-                sendMessageToMobile(TopicUtil.getTopic(TopicUtil.TOPIC_TYPE_MNF, sCenterGUID, senMnf.getName()), new Gson().toJson(senMnf));
-                sensorGUID = GUIDUtil.getGUID();
-                addSensorGUID(sensorGUID, sensorType, "y");
-                senMnf.setName(sensor.getName()+"_Y");
-                senMnf.setType("" + sensor.getType());
-                senMnf.setDescription("Gravitation Y-axis of a " + Build.MANUFACTURER + " " + Build.MODEL + " " + Build.USER + " Android device");
-                sendMessageToMobile(TopicUtil.getTopic(TopicUtil.TOPIC_TYPE_MNF, sCenterGUID, senMnf.getName()), new Gson().toJson(senMnf));
-                sensorGUID = GUIDUtil.getGUID();
-                addSensorGUID(sensorGUID, sensorType, "z");
-                senMnf.setName(sensor.getName()+"_Z");
-                senMnf.setType("" + sensor.getType());
-                senMnf.setDescription("Gravitation Z-axis of a " + Build.MANUFACTURER + " " + Build.MODEL + " " + Build.USER + " Android device");
-                sendMessageToMobile(TopicUtil.getTopic(TopicUtil.TOPIC_TYPE_MNF, sCenterGUID, senMnf.getName()), new Gson().toJson(senMnf));
+                sensorGUID = getSensorGUID(sensorType, "x");
+                if (sensorGUID == null || sensorGUID.equals("")) {
+                    senMnf.setType("sensor");
+                    senMnf.setValueType("float");
+                    sensorGUID = GUIDUtil.getGUID();
+                    addSensorGUID(sensorGUID, sensorType, "x");
+                    senMnf.setName(sensor.getName() + "_X");
+                    senMnf.setDescription("Gravitation X-axis of a " + Build.MANUFACTURER + " " + Build.MODEL + " Android device");
+                    sendMessageToMobile(TopicUtil.getTopic(TopicUtil.TOPIC_TYPE_MNF, sCenterGUID, sensorGUID), new Gson().toJson(senMnf));
+                    sensorGUID = GUIDUtil.getGUID();
+                    addSensorGUID(sensorGUID, sensorType, "y");
+                    senMnf.setName(sensor.getName() + "_Y");
+                    senMnf.setDescription("Gravitation Y-axis of a " + Build.MANUFACTURER + " " + Build.MODEL + " Android device");
+                    sendMessageToMobile(TopicUtil.getTopic(TopicUtil.TOPIC_TYPE_MNF, sCenterGUID, sensorGUID), new Gson().toJson(senMnf));
+                    sensorGUID = GUIDUtil.getGUID();
+                    addSensorGUID(sensorGUID, sensorType, "z");
+                    senMnf.setName(sensor.getName() + "_Z");
+                    senMnf.setDescription("Gravitation Z-axis of a " + Build.MANUFACTURER + " " + Build.MODEL + " Android device");
+                    sendMessageToMobile(TopicUtil.getTopic(TopicUtil.TOPIC_TYPE_MNF, sCenterGUID, sensorGUID), new Gson().toJson(senMnf));
+                }
             } else if (sensorType == SensorTypeKeys.SENS_LINEAR_ACCELERATION) {
-                sensorGUID = GUIDUtil.getGUID();
-                addSensorGUID(sensorGUID, sensorType, "x");
-                senMnf.setName(sensor.getName()+"_X");
-                senMnf.setType("" + sensor.getType());
-                senMnf.setDescription("Linear Accelerometer X-axis of a " + Build.MANUFACTURER + " " + Build.MODEL + " " + Build.USER + " Android device");
-                sendMessageToMobile(TopicUtil.getTopic(TopicUtil.TOPIC_TYPE_MNF, sCenterGUID, senMnf.getName()), new Gson().toJson(senMnf));
-                sensorGUID = GUIDUtil.getGUID();
-                addSensorGUID(sensorGUID, sensorType, "y");
-                senMnf.setName(sensor.getName()+"_Y");
-                senMnf.setType("" + sensor.getType());
-                senMnf.setDescription("Linear Accelerometer Y-axis of a " + Build.MANUFACTURER + " " + Build.MODEL + " " + Build.USER + " Android device");
-                sendMessageToMobile(TopicUtil.getTopic(TopicUtil.TOPIC_TYPE_MNF, sCenterGUID, senMnf.getName()), new Gson().toJson(senMnf));
-                sensorGUID = GUIDUtil.getGUID();
-                addSensorGUID(sensorGUID, sensorType, "z");
-                senMnf.setName(sensor.getName()+"_Z");
-                senMnf.setType("" + sensor.getType());
-                senMnf.setDescription("Linear Accelerometer Z-axis of a " + Build.MANUFACTURER + " " + Build.MODEL + " " + Build.USER + " Android device");
-                sendMessageToMobile(TopicUtil.getTopic(TopicUtil.TOPIC_TYPE_MNF, sCenterGUID, senMnf.getName()), new Gson().toJson(senMnf));
+                sensorGUID = getSensorGUID(sensorType, "x");
+                if (sensorGUID == null || sensorGUID.equals("")) {
+                    senMnf.setType("sensor");
+                    senMnf.setValueType("float");
+                    sensorGUID = GUIDUtil.getGUID();
+                    addSensorGUID(sensorGUID, sensorType, "x");
+                    senMnf.setName(sensor.getName() + "_X");
+                    senMnf.setDescription("Linear Accelerometer X-axis of a " + Build.MANUFACTURER + " " + Build.MODEL + " Android device");
+                    sendMessageToMobile(TopicUtil.getTopic(TopicUtil.TOPIC_TYPE_MNF, sCenterGUID, sensorGUID), new Gson().toJson(senMnf));
+                    sensorGUID = GUIDUtil.getGUID();
+                    addSensorGUID(sensorGUID, sensorType, "y");
+                    senMnf.setName(sensor.getName() + "_Y");
+                    senMnf.setDescription("Linear Accelerometer Y-axis of a " + Build.MANUFACTURER + " " + Build.MODEL + " Android device");
+                    sendMessageToMobile(TopicUtil.getTopic(TopicUtil.TOPIC_TYPE_MNF, sCenterGUID, sensorGUID), new Gson().toJson(senMnf));
+                    sensorGUID = GUIDUtil.getGUID();
+                    addSensorGUID(sensorGUID, sensorType, "z");
+                    senMnf.setName(sensor.getName() + "_Z");
+                    senMnf.setDescription("Linear Accelerometer Z-axis of a " + Build.MANUFACTURER + " " + Build.MODEL + " Android device");
+                    sendMessageToMobile(TopicUtil.getTopic(TopicUtil.TOPIC_TYPE_MNF, sCenterGUID, sensorGUID), new Gson().toJson(senMnf));
+                }
             } else if (sensorType == SensorTypeKeys.SENS_MAGNETIC_FIELD) {
-                sensorGUID = GUIDUtil.getGUID();
-                addSensorGUID(sensorGUID, sensorType, "x");
-                senMnf.setName(sensor.getName()+"_X");
-                senMnf.setType("" + sensor.getType());
-                senMnf.setDescription("Magnetic Field X-axis of a " + Build.MANUFACTURER + " " + Build.MODEL + " " + Build.USER + " Android device");
-                sendMessageToMobile(TopicUtil.getTopic(TopicUtil.TOPIC_TYPE_MNF, sCenterGUID, senMnf.getName()), new Gson().toJson(senMnf));
-                sensorGUID = GUIDUtil.getGUID();
-                addSensorGUID(sensorGUID, sensorType, "y");
-                senMnf.setName(sensor.getName()+"_Y");
-                senMnf.setType("" + sensor.getType());
-                senMnf.setDescription("Magnetic Field Y-axis of a " + Build.MANUFACTURER + " " + Build.MODEL + " " + Build.USER + " Android device");
-                sendMessageToMobile(TopicUtil.getTopic(TopicUtil.TOPIC_TYPE_MNF, sCenterGUID, senMnf.getName()), new Gson().toJson(senMnf));
-                sensorGUID = GUIDUtil.getGUID();
-                addSensorGUID(sensorGUID, sensorType, "z");
-                senMnf.setName(sensor.getName()+"_Z");
-                senMnf.setType("" + sensor.getType());
-                senMnf.setDescription("Magnetic Field Z-axis of a " + Build.MANUFACTURER + " " + Build.MODEL + " " + Build.USER + " Android device");
-                sendMessageToMobile(TopicUtil.getTopic(TopicUtil.TOPIC_TYPE_MNF, sCenterGUID, senMnf.getName()), new Gson().toJson(senMnf));
+                sensorGUID = getSensorGUID(sensorType, "x");
+                if (sensorGUID == null || sensorGUID.equals("")) {
+                    senMnf.setType("sensor");
+                    senMnf.setValueType("float");
+                    sensorGUID = GUIDUtil.getGUID();
+                    addSensorGUID(sensorGUID, sensorType, "x");
+                    senMnf.setName(sensor.getName() + "_X");
+                    senMnf.setDescription("Magnetic Field X-axis of a " + Build.MANUFACTURER + " " + Build.MODEL + " Android device");
+                    sendMessageToMobile(TopicUtil.getTopic(TopicUtil.TOPIC_TYPE_MNF, sCenterGUID, sensorGUID), new Gson().toJson(senMnf));
+                    sensorGUID = GUIDUtil.getGUID();
+                    addSensorGUID(sensorGUID, sensorType, "y");
+                    senMnf.setName(sensor.getName() + "_Y");
+                    senMnf.setDescription("Magnetic Field Y-axis of a " + Build.MANUFACTURER + " " + Build.MODEL + " Android device");
+                    sendMessageToMobile(TopicUtil.getTopic(TopicUtil.TOPIC_TYPE_MNF, sCenterGUID, sensorGUID), new Gson().toJson(senMnf));
+                    sensorGUID = GUIDUtil.getGUID();
+                    addSensorGUID(sensorGUID, sensorType, "z");
+                    senMnf.setName(sensor.getName() + "_Z");
+                    senMnf.setDescription("Magnetic Field Z-axis of a " + Build.MANUFACTURER + " " + Build.MODEL + " Android device");
+                    sendMessageToMobile(TopicUtil.getTopic(TopicUtil.TOPIC_TYPE_MNF, sCenterGUID, sensorGUID), new Gson().toJson(senMnf));
+                }
             } else if (sensorType == SensorTypeKeys.SENS_MAGNETIC_FIELD_UNCALIBRATED) {
-                sensorGUID = GUIDUtil.getGUID();
-                addSensorGUID(sensorGUID, sensorType, "x");
-                senMnf.setName(sensor.getName() + "_X");
-                senMnf.setType("" + sensor.getType());
-                senMnf.setDescription("Magnetic Field Uncalibrated X-axis of a " + Build.MANUFACTURER + " " + Build.MODEL + " " + Build.USER + " Android device");
-                sendMessageToMobile(TopicUtil.getTopic(TopicUtil.TOPIC_TYPE_MNF, sCenterGUID, senMnf.getName()), new Gson().toJson(senMnf));
-                sensorGUID = GUIDUtil.getGUID();
-                addSensorGUID(sensorGUID, sensorType, "y");
-                senMnf.setName(sensor.getName() + "_Y");
-                senMnf.setType("" + sensor.getType());
-                senMnf.setDescription("Magnetic Field Uncalibrated Y-axis of a " + Build.MANUFACTURER + " " + Build.MODEL + " " + Build.USER + " Android device");
-                sendMessageToMobile(TopicUtil.getTopic(TopicUtil.TOPIC_TYPE_MNF, sCenterGUID, senMnf.getName()), new Gson().toJson(senMnf));
-                sensorGUID = GUIDUtil.getGUID();
-                addSensorGUID(sensorGUID, sensorType, "z");
-                senMnf.setName(sensor.getName() + "_Z");
-                senMnf.setType("" + sensor.getType());
-                senMnf.setDescription("Magnetic Field Uncalibrated Z-axis of a " + Build.MANUFACTURER + " " + Build.MODEL + " " + Build.USER + " Android device");
-                sendMessageToMobile(TopicUtil.getTopic(TopicUtil.TOPIC_TYPE_MNF, sCenterGUID, senMnf.getName()), new Gson().toJson(senMnf));
-                sensorGUID = GUIDUtil.getGUID();
-                addSensorGUID(sensorGUID, sensorType, "x_bias");
-                senMnf.setName(sensor.getName() + "_X_bias");
-                senMnf.setType("" + sensor.getType());
-                senMnf.setDescription("Magnetic Field Uncalibrated X-axis bias of a " + Build.MANUFACTURER + " " + Build.MODEL + " " + Build.USER + " Android device");
-                sendMessageToMobile(TopicUtil.getTopic(TopicUtil.TOPIC_TYPE_MNF, sCenterGUID, senMnf.getName()), new Gson().toJson(senMnf));
-                sensorGUID = GUIDUtil.getGUID();
-                addSensorGUID(sensorGUID, sensorType, "y_bias");
-                senMnf.setName(sensor.getName() + "_Y_bias");
-                senMnf.setType("" + sensor.getType());
-                senMnf.setDescription("Magnetic Field Uncalibrated Y-axis bias of a " + Build.MANUFACTURER + " " + Build.MODEL + " " + Build.USER + " Android device");
-                sendMessageToMobile(TopicUtil.getTopic(TopicUtil.TOPIC_TYPE_MNF, sCenterGUID, senMnf.getName()), new Gson().toJson(senMnf));
-                sensorGUID = GUIDUtil.getGUID();
-                addSensorGUID(sensorGUID, sensorType, "z_bias");
-                senMnf.setName(sensor.getName() + "_Z_bias");
-                senMnf.setType("" + sensor.getType());
-                senMnf.setDescription("Magnetic Field Uncalibrated Z-axis bias of a " + Build.MANUFACTURER + " " + Build.MODEL + " " + Build.USER + " Android device");
-                sendMessageToMobile(TopicUtil.getTopic(TopicUtil.TOPIC_TYPE_MNF, sCenterGUID, senMnf.getName()), new Gson().toJson(senMnf));
+                sensorGUID = getSensorGUID(sensorType, "x");
+                if (sensorGUID == null || sensorGUID.equals("")) {
+                    senMnf.setType("sensor");
+                    senMnf.setValueType("float");
+                    sensorGUID = GUIDUtil.getGUID();
+                    addSensorGUID(sensorGUID, sensorType, "x");
+                    senMnf.setName(sensor.getName() + "_X");
+                    senMnf.setDescription("Magnetic Field Uncalibrated X-axis of a " + Build.MANUFACTURER + " " + Build.MODEL + " Android device");
+                    sendMessageToMobile(TopicUtil.getTopic(TopicUtil.TOPIC_TYPE_MNF, sCenterGUID, sensorGUID), new Gson().toJson(senMnf));
+                    sensorGUID = GUIDUtil.getGUID();
+                    addSensorGUID(sensorGUID, sensorType, "y");
+                    senMnf.setName(sensor.getName() + "_Y");
+                    senMnf.setDescription("Magnetic Field Uncalibrated Y-axis of a " + Build.MANUFACTURER + " " + Build.MODEL + " Android device");
+                    sendMessageToMobile(TopicUtil.getTopic(TopicUtil.TOPIC_TYPE_MNF, sCenterGUID, sensorGUID), new Gson().toJson(senMnf));
+                    sensorGUID = GUIDUtil.getGUID();
+                    addSensorGUID(sensorGUID, sensorType, "z");
+                    senMnf.setName(sensor.getName() + "_Z");
+                    senMnf.setDescription("Magnetic Field Uncalibrated Z-axis of a " + Build.MANUFACTURER + " " + Build.MODEL + " Android device");
+                    sendMessageToMobile(TopicUtil.getTopic(TopicUtil.TOPIC_TYPE_MNF, sCenterGUID, sensorGUID), new Gson().toJson(senMnf));
+                    sensorGUID = GUIDUtil.getGUID();
+                    addSensorGUID(sensorGUID, sensorType, "x_bias");
+                    senMnf.setName(sensor.getName() + "_X_bias");
+                    senMnf.setDescription("Magnetic Field Uncalibrated X-axis bias of a " + Build.MANUFACTURER + " " + Build.MODEL + " Android device");
+                    sendMessageToMobile(TopicUtil.getTopic(TopicUtil.TOPIC_TYPE_MNF, sCenterGUID, sensorGUID), new Gson().toJson(senMnf));
+                    sensorGUID = GUIDUtil.getGUID();
+                    addSensorGUID(sensorGUID, sensorType, "y_bias");
+                    senMnf.setName(sensor.getName() + "_Y_bias");
+                    senMnf.setDescription("Magnetic Field Uncalibrated Y-axis bias of a " + Build.MANUFACTURER + " " + Build.MODEL + " Android device");
+                    sendMessageToMobile(TopicUtil.getTopic(TopicUtil.TOPIC_TYPE_MNF, sCenterGUID, sensorGUID), new Gson().toJson(senMnf));
+                    sensorGUID = GUIDUtil.getGUID();
+                    addSensorGUID(sensorGUID, sensorType, "z_bias");
+                    senMnf.setName(sensor.getName() + "_Z_bias");
+                    senMnf.setDescription("Magnetic Field Uncalibrated Z-axis bias of a " + Build.MANUFACTURER + " " + Build.MODEL + " Android device");
+                    sendMessageToMobile(TopicUtil.getTopic(TopicUtil.TOPIC_TYPE_MNF, sCenterGUID, sensorGUID), new Gson().toJson(senMnf));
+                }
             } else if (sensorType == SensorTypeKeys.SENS_AMBIENT_TEMPERATURE) {
-                sensorGUID = GUIDUtil.getGUID();
-                addSensorGUID(sensorGUID, sensorType, "temp");
-                senMnf.setName(sensor.getName());
-                senMnf.setType("" + sensor.getType());
-                senMnf.setDescription("Ambient Temperature of a " + Build.MANUFACTURER + " " + Build.MODEL + " " + Build.USER + " Android device");
-                sendMessageToMobile(TopicUtil.getTopic(TopicUtil.TOPIC_TYPE_MNF, sCenterGUID, senMnf.getName()), new Gson().toJson(senMnf));
+                sensorGUID = getSensorGUID(sensorType, "temp");
+                if (sensorGUID == null || sensorGUID.equals("")) {
+                    senMnf.setType("sensor");
+                    senMnf.setValueType("float");
+                    sensorGUID = GUIDUtil.getGUID();
+                    addSensorGUID(sensorGUID, sensorType, "temp");
+                    senMnf.setName(sensor.getName());
+                    senMnf.setDescription("Ambient Temperature of a " + Build.MANUFACTURER + " " + Build.MODEL + " Android device");
+                    sendMessageToMobile(TopicUtil.getTopic(TopicUtil.TOPIC_TYPE_MNF, sCenterGUID, sensorGUID), new Gson().toJson(senMnf));
+                }
             } else if (sensorType == SensorTypeKeys.SENS_GAME_ROTATION_VECTOR) {
-                sensorGUID = GUIDUtil.getGUID();
-                addSensorGUID(sensorGUID, sensorType, "x");
-                senMnf.setName(sensor.getName() + "_X");
-                senMnf.setType("" + sensor.getType());
-                senMnf.setDescription("Game Rotation Vector X-axis of a " + Build.MANUFACTURER + " " + Build.MODEL + " " + Build.USER + " Android device");
-                sendMessageToMobile(TopicUtil.getTopic(TopicUtil.TOPIC_TYPE_MNF, sCenterGUID, senMnf.getName()), new Gson().toJson(senMnf));
-                sensorGUID = GUIDUtil.getGUID();
-                addSensorGUID(sensorGUID, sensorType, "y");
-                senMnf.setName(sensor.getName() + "_Y");
-                senMnf.setType("" + sensor.getType());
-                senMnf.setDescription("Game Rotation Vector Y-axis of a " + Build.MANUFACTURER + " " + Build.MODEL + " " + Build.USER + " Android device");
-                sendMessageToMobile(TopicUtil.getTopic(TopicUtil.TOPIC_TYPE_MNF, sCenterGUID, senMnf.getName()), new Gson().toJson(senMnf));
-                sensorGUID = GUIDUtil.getGUID();
-                addSensorGUID(sensorGUID, sensorType, "z");
-                senMnf.setName(sensor.getName() + "_Z");
-                senMnf.setType("" + sensor.getType());
-                senMnf.setDescription("Game Rotation Vector Z-axis of a " + Build.MANUFACTURER + " " + Build.MODEL + " " + Build.USER + " Android device");
-                sendMessageToMobile(TopicUtil.getTopic(TopicUtil.TOPIC_TYPE_MNF, sCenterGUID, senMnf.getName()), new Gson().toJson(senMnf));
-                sensorGUID = GUIDUtil.getGUID();
-                addSensorGUID(sensorGUID, sensorType, "half_angle");
-                senMnf.setName(sensor.getName() + "_Half_Angle");
-                senMnf.setType("" + sensor.getType());
-                senMnf.setDescription("Game Rotation Vector half angle of a " + Build.MANUFACTURER + " " + Build.MODEL + " " + Build.USER + " Android device");
-                sendMessageToMobile(TopicUtil.getTopic(TopicUtil.TOPIC_TYPE_MNF, sCenterGUID, senMnf.getName()), new Gson().toJson(senMnf));
-                sensorGUID = GUIDUtil.getGUID();
-                addSensorGUID(sensorGUID, sensorType, "est_head_acc");
-                senMnf.setName(sensor.getName() + "_Est_head_acc");
-                senMnf.setType("" + sensor.getType());
-                senMnf.setDescription("Game Rotation Vector estimated heading accuracy of a " + Build.MANUFACTURER + " " + Build.MODEL + " " + Build.USER + " Android device");
-                sendMessageToMobile(TopicUtil.getTopic(TopicUtil.TOPIC_TYPE_MNF, sCenterGUID, senMnf.getName()), new Gson().toJson(senMnf));
+                sensorGUID = getSensorGUID(sensorType, "x");
+                if (sensorGUID == null || sensorGUID.equals("")) {
+                    senMnf.setType("sensor");
+                    senMnf.setValueType("float");
+                    sensorGUID = GUIDUtil.getGUID();
+                    addSensorGUID(sensorGUID, sensorType, "x");
+                    senMnf.setName(sensor.getName() + "_X");
+                    senMnf.setDescription("Game Rotation Vector X-axis of a " + Build.MANUFACTURER + " " + Build.MODEL + " Android device");
+                    sendMessageToMobile(TopicUtil.getTopic(TopicUtil.TOPIC_TYPE_MNF, sCenterGUID, sensorGUID), new Gson().toJson(senMnf));
+                    sensorGUID = GUIDUtil.getGUID();
+                    addSensorGUID(sensorGUID, sensorType, "y");
+                    senMnf.setName(sensor.getName() + "_Y");
+                    senMnf.setDescription("Game Rotation Vector Y-axis of a " + Build.MANUFACTURER + " " + Build.MODEL + " Android device");
+                    sendMessageToMobile(TopicUtil.getTopic(TopicUtil.TOPIC_TYPE_MNF, sCenterGUID, sensorGUID), new Gson().toJson(senMnf));
+                    sensorGUID = GUIDUtil.getGUID();
+                    addSensorGUID(sensorGUID, sensorType, "z");
+                    senMnf.setName(sensor.getName() + "_Z");
+                    senMnf.setDescription("Game Rotation Vector Z-axis of a " + Build.MANUFACTURER + " " + Build.MODEL + " Android device");
+                    sendMessageToMobile(TopicUtil.getTopic(TopicUtil.TOPIC_TYPE_MNF, sCenterGUID, sensorGUID), new Gson().toJson(senMnf));
+                    sensorGUID = GUIDUtil.getGUID();
+                    addSensorGUID(sensorGUID, sensorType, "half_angle");
+                    senMnf.setName(sensor.getName() + "_Half_Angle");
+                    senMnf.setDescription("Game Rotation Vector half angle of a " + Build.MANUFACTURER + " " + Build.MODEL + " Android device");
+                    sendMessageToMobile(TopicUtil.getTopic(TopicUtil.TOPIC_TYPE_MNF, sCenterGUID, sensorGUID), new Gson().toJson(senMnf));
+                    sensorGUID = GUIDUtil.getGUID();
+                    addSensorGUID(sensorGUID, sensorType, "est_head_acc");
+                    senMnf.setName(sensor.getName() + "_Est_head_acc");
+                    senMnf.setDescription("Game Rotation Vector estimated heading accuracy of a " + Build.MANUFACTURER + " " + Build.MODEL + " Android device");
+                    sendMessageToMobile(TopicUtil.getTopic(TopicUtil.TOPIC_TYPE_MNF, sCenterGUID, sensorGUID), new Gson().toJson(senMnf));
+                }
             } else if (sensorType == SensorTypeKeys.SENS_ROTATION_VECTOR) {
-                sensorGUID = GUIDUtil.getGUID();
-                addSensorGUID(sensorGUID, sensorType, "x");
-                senMnf.setName(sensor.getName()+"_X");
-                senMnf.setType("" + sensor.getType());
-                senMnf.setDescription("Rotation Vector X-axis of a " + Build.MANUFACTURER + " " + Build.MODEL + " " + Build.USER + " Android device");
-                sendMessageToMobile(TopicUtil.getTopic(TopicUtil.TOPIC_TYPE_MNF, sCenterGUID, senMnf.getName()), new Gson().toJson(senMnf));
-                sensorGUID = GUIDUtil.getGUID();
-                addSensorGUID(sensorGUID, sensorType, "y");
-                senMnf.setName(sensor.getName()+"_Y");
-                senMnf.setType("" + sensor.getType());
-                senMnf.setDescription("Rotation Vector Y-axis of a " + Build.MANUFACTURER + " " + Build.MODEL + " " + Build.USER + " Android device");
-                sendMessageToMobile(TopicUtil.getTopic(TopicUtil.TOPIC_TYPE_MNF, sCenterGUID, senMnf.getName()), new Gson().toJson(senMnf));
-                sensorGUID = GUIDUtil.getGUID();
-                addSensorGUID(sensorGUID, sensorType, "z");
-                senMnf.setName(sensor.getName()+"_Z");
-                senMnf.setType("" + sensor.getType());
-                senMnf.setDescription("Rotation Vector Z-axis of a " + Build.MANUFACTURER + " " + Build.MODEL + " " + Build.USER + " Android device");
-                sendMessageToMobile(TopicUtil.getTopic(TopicUtil.TOPIC_TYPE_MNF, sCenterGUID, senMnf.getName()), new Gson().toJson(senMnf));
-                sensorGUID = GUIDUtil.getGUID();
-                addSensorGUID(sensorGUID, sensorType, "half_angle");
-                senMnf.setName(sensor.getName()+"_Half_Angle");
-                senMnf.setType("" + sensor.getType());
-                senMnf.setDescription("Rotation Vector half angle of a " + Build.MANUFACTURER + " " + Build.MODEL + " " + Build.USER + " Android device");
-                sendMessageToMobile(TopicUtil.getTopic(TopicUtil.TOPIC_TYPE_MNF, sCenterGUID, senMnf.getName()), new Gson().toJson(senMnf));
-                sensorGUID = GUIDUtil.getGUID();
-                addSensorGUID(sensorGUID, sensorType, "est_head_acc");
-                senMnf.setName(sensor.getName()+"_Est_head_acc");
-                senMnf.setType("" + sensor.getType());
-                senMnf.setDescription("Rotation Vector estimated heading accuracy of a " + Build.MANUFACTURER + " " + Build.MODEL + " " + Build.USER + " Android device");
-                sendMessageToMobile(TopicUtil.getTopic(TopicUtil.TOPIC_TYPE_MNF, sCenterGUID, senMnf.getName()), new Gson().toJson(senMnf));
+                sensorGUID = getSensorGUID(sensorType, "x");
+                if (sensorGUID == null || sensorGUID.equals("")) {
+                    senMnf.setType("sensor");
+                    senMnf.setValueType("float");
+                    sensorGUID = GUIDUtil.getGUID();
+                    addSensorGUID(sensorGUID, sensorType, "x");
+                    senMnf.setName(sensor.getName() + "_X");
+                    senMnf.setDescription("Rotation Vector X-axis of a " + Build.MANUFACTURER + " " + Build.MODEL + " Android device");
+                    sendMessageToMobile(TopicUtil.getTopic(TopicUtil.TOPIC_TYPE_MNF, sCenterGUID, sensorGUID), new Gson().toJson(senMnf));
+                    sensorGUID = GUIDUtil.getGUID();
+                    addSensorGUID(sensorGUID, sensorType, "y");
+                    senMnf.setName(sensor.getName() + "_Y");
+                    senMnf.setDescription("Rotation Vector Y-axis of a " + Build.MANUFACTURER + " " + Build.MODEL + " Android device");
+                    sendMessageToMobile(TopicUtil.getTopic(TopicUtil.TOPIC_TYPE_MNF, sCenterGUID, sensorGUID), new Gson().toJson(senMnf));
+                    sensorGUID = GUIDUtil.getGUID();
+                    addSensorGUID(sensorGUID, sensorType, "z");
+                    senMnf.setName(sensor.getName() + "_Z");
+                    senMnf.setDescription("Rotation Vector Z-axis of a " + Build.MANUFACTURER + " " + Build.MODEL + " Android device");
+                    sendMessageToMobile(TopicUtil.getTopic(TopicUtil.TOPIC_TYPE_MNF, sCenterGUID, sensorGUID), new Gson().toJson(senMnf));
+                    sensorGUID = GUIDUtil.getGUID();
+                    addSensorGUID(sensorGUID, sensorType, "half_angle");
+                    senMnf.setName(sensor.getName() + "_Half_Angle");
+                    senMnf.setDescription("Rotation Vector half angle of a " + Build.MANUFACTURER + " " + Build.MODEL + " Android device");
+                    sendMessageToMobile(TopicUtil.getTopic(TopicUtil.TOPIC_TYPE_MNF, sCenterGUID, sensorGUID), new Gson().toJson(senMnf));
+                    sensorGUID = GUIDUtil.getGUID();
+                    addSensorGUID(sensorGUID, sensorType, "est_head_acc");
+                    senMnf.setName(sensor.getName() + "_Est_head_acc");
+                    senMnf.setDescription("Rotation Vector estimated heading accuracy of a " + Build.MANUFACTURER + " " + Build.MODEL + " Android device");
+                    sendMessageToMobile(TopicUtil.getTopic(TopicUtil.TOPIC_TYPE_MNF, sCenterGUID, sensorGUID), new Gson().toJson(senMnf));
+                }
             } else if (sensorType == SensorTypeKeys.SENS_GEOMAGNETIC) {
                 //TODO
             } else if (sensorType == SensorTypeKeys.SENS_LIGHT) {
-                sensorGUID = GUIDUtil.getGUID();
-                addSensorGUID(sensorGUID, sensorType, "lux");
-                senMnf.setName(sensor.getName());
-                senMnf.setType("" + sensor.getType());
-                senMnf.setDescription("Light of a " + Build.MANUFACTURER + " " + Build.MODEL + " " + Build.USER + " Android device");
-                sendMessageToMobile(TopicUtil.getTopic(TopicUtil.TOPIC_TYPE_MNF, sCenterGUID, senMnf.getName()), new Gson().toJson(senMnf));
+                sensorGUID = getSensorGUID(sensorType, "lux");
+                if (sensorGUID == null || sensorGUID.equals("")) {
+                    senMnf.setType("sensor");
+                    senMnf.setValueType("float");
+                    sensorGUID = GUIDUtil.getGUID();
+                    addSensorGUID(sensorGUID, sensorType, "lux");
+                    senMnf.setName(sensor.getName());
+                    senMnf.setDescription("Light of a " + Build.MANUFACTURER + " " + Build.MODEL + " Android device");
+                    sendMessageToMobile(TopicUtil.getTopic(TopicUtil.TOPIC_TYPE_MNF, sCenterGUID, sensorGUID), new Gson().toJson(senMnf));
+                }
             } else if (sensorType == SensorTypeKeys.SENS_GYROSCOPE) {
-                sensorGUID = GUIDUtil.getGUID();
-                addSensorGUID(sensorGUID, sensorType, "x_speed");
-                senMnf.setName(sensor.getName()+"_X_Speed");
-                senMnf.setType("" + sensor.getType());
-                senMnf.setDescription("Gyroscope X-axis speed of a " + Build.MANUFACTURER + " " + Build.MODEL + " " + Build.USER + " Android device");
-                sendMessageToMobile(TopicUtil.getTopic(TopicUtil.TOPIC_TYPE_MNF, sCenterGUID, senMnf.getName()), new Gson().toJson(senMnf));
-                sensorGUID = GUIDUtil.getGUID();
-                addSensorGUID(sensorGUID, sensorType, "y_speed");
-                senMnf.setName(sensor.getName()+"_Y_Speed");
-                senMnf.setType("" + sensor.getType());
-                senMnf.setDescription("Gyroscope Y-axis speed of a " + Build.MANUFACTURER + " " + Build.MODEL + " " + Build.USER + " Android device");
-                sendMessageToMobile(TopicUtil.getTopic(TopicUtil.TOPIC_TYPE_MNF, sCenterGUID, senMnf.getName()), new Gson().toJson(senMnf));
-                sensorGUID = GUIDUtil.getGUID();
-                addSensorGUID(sensorGUID, sensorType, "z_speed");
-                senMnf.setName(sensor.getName()+"_Z_Speed");
-                senMnf.setType("" + sensor.getType());
-                senMnf.setDescription("Gyroscope Z-axis speed of a " + Build.MANUFACTURER + " " + Build.MODEL + " " + Build.USER + " Android device");
-                sendMessageToMobile(TopicUtil.getTopic(TopicUtil.TOPIC_TYPE_MNF, sCenterGUID, senMnf.getName()), new Gson().toJson(senMnf));
+                sensorGUID = getSensorGUID(sensorType, "x_speed");
+                if (sensorGUID == null || sensorGUID.equals("")) {
+                    senMnf.setType("sensor");
+                    senMnf.setValueType("float");
+                    sensorGUID = GUIDUtil.getGUID();
+                    addSensorGUID(sensorGUID, sensorType, "x_speed");
+                    senMnf.setName(sensor.getName() + "_X_Speed");
+                    senMnf.setDescription("Gyroscope X-axis speed of a " + Build.MANUFACTURER + " " + Build.MODEL + " Android device");
+                    sendMessageToMobile(TopicUtil.getTopic(TopicUtil.TOPIC_TYPE_MNF, sCenterGUID, sensorGUID), new Gson().toJson(senMnf));
+                    sensorGUID = GUIDUtil.getGUID();
+                    addSensorGUID(sensorGUID, sensorType, "y_speed");
+                    senMnf.setName(sensor.getName() + "_Y_Speed");
+                    senMnf.setDescription("Gyroscope Y-axis speed of a " + Build.MANUFACTURER + " " + Build.MODEL + " Android device");
+                    sendMessageToMobile(TopicUtil.getTopic(TopicUtil.TOPIC_TYPE_MNF, sCenterGUID, sensorGUID), new Gson().toJson(senMnf));
+                    sensorGUID = GUIDUtil.getGUID();
+                    addSensorGUID(sensorGUID, sensorType, "z_speed");
+                    senMnf.setName(sensor.getName() + "_Z_Speed");
+                    senMnf.setDescription("Gyroscope Z-axis speed of a " + Build.MANUFACTURER + " " + Build.MODEL + " Android device");
+                    sendMessageToMobile(TopicUtil.getTopic(TopicUtil.TOPIC_TYPE_MNF, sCenterGUID, sensorGUID), new Gson().toJson(senMnf));
+                }
             } else if (sensorType == SensorTypeKeys.SENS_GYROSCOPE_UNCALIBRATED) {
-                sensorGUID = GUIDUtil.getGUID();
-                addSensorGUID(sensorGUID, sensorType, "x_speed");
-                senMnf.setName(sensor.getName() + "_X_Speed");
-                senMnf.setType("" + sensor.getType());
-                senMnf.setDescription("Gyroscope Uncalibrated X-axis speed of a " + Build.MANUFACTURER + " " + Build.MODEL + " " + Build.USER + " Android device");
-                sendMessageToMobile(TopicUtil.getTopic(TopicUtil.TOPIC_TYPE_MNF, sCenterGUID, senMnf.getName()), new Gson().toJson(senMnf));
-                sensorGUID = GUIDUtil.getGUID();
-                addSensorGUID(sensorGUID, sensorType, "y_speed");
-                senMnf.setName(sensor.getName() + "_Y_Speed");
-                senMnf.setType("" + sensor.getType());
-                senMnf.setDescription("Gyroscope Uncalibrated Y-axis speed of a " + Build.MANUFACTURER + " " + Build.MODEL + " " + Build.USER + " Android device");
-                sendMessageToMobile(TopicUtil.getTopic(TopicUtil.TOPIC_TYPE_MNF, sCenterGUID, senMnf.getName()), new Gson().toJson(senMnf));
-                sensorGUID = GUIDUtil.getGUID();
-                addSensorGUID(sensorGUID, sensorType, "z_bias");
-                senMnf.setName(sensor.getName() + "_Z_Speed");
-                senMnf.setType("" + sensor.getType());
-                senMnf.setDescription("Gyroscope Uncalibrated Z-axis speed of a " + Build.MANUFACTURER + " " + Build.MODEL + " " + Build.USER + " Android device");
-                sendMessageToMobile(TopicUtil.getTopic(TopicUtil.TOPIC_TYPE_MNF, sCenterGUID, senMnf.getName()), new Gson().toJson(senMnf));
-                sensorGUID = GUIDUtil.getGUID();
-                addSensorGUID(sensorGUID, sensorType, "x_drift");
-                senMnf.setName(sensor.getName() + "_X_Drift");
-                senMnf.setType("" + sensor.getType());
-                senMnf.setDescription("Gyroscope Uncalibrated X-axis drift of a " + Build.MANUFACTURER + " " + Build.MODEL + " " + Build.USER + " Android device");
-                sendMessageToMobile(TopicUtil.getTopic(TopicUtil.TOPIC_TYPE_MNF, sCenterGUID, senMnf.getName()), new Gson().toJson(senMnf));
-                sensorGUID = GUIDUtil.getGUID();
-                addSensorGUID(sensorGUID, sensorType, "y_drift");
-                senMnf.setName(sensor.getName() + "_Y_Drift");
-                senMnf.setType("" + sensor.getType());
-                senMnf.setDescription("Gyroscope Uncalibrated Y-axis drift of a " + Build.MANUFACTURER + " " + Build.MODEL + " " + Build.USER + " Android device");
-                sendMessageToMobile(TopicUtil.getTopic(TopicUtil.TOPIC_TYPE_MNF, sCenterGUID, senMnf.getName()), new Gson().toJson(senMnf));
-                sensorGUID = GUIDUtil.getGUID();
-                addSensorGUID(sensorGUID, sensorType, "z_drift");
-                senMnf.setName(sensor.getName() + "_Z_Drift");
-                senMnf.setType("" + sensor.getType());
-                senMnf.setDescription("Gyroscope Uncalibrated Z-axis drift of a " + Build.MANUFACTURER + " " + Build.MODEL + " " + Build.USER + " Android device");
-                sendMessageToMobile(TopicUtil.getTopic(TopicUtil.TOPIC_TYPE_MNF, sCenterGUID, senMnf.getName()), new Gson().toJson(senMnf));
+                sensorGUID = getSensorGUID(sensorType, "x_speed");
+                if (sensorGUID == null || sensorGUID.equals("")) {
+                    senMnf.setType("sensor");
+                    senMnf.setValueType("float");
+                    sensorGUID = GUIDUtil.getGUID();
+                    addSensorGUID(sensorGUID, sensorType, "x_speed");
+                    senMnf.setName(sensor.getName() + "_X_Speed");
+                    senMnf.setDescription("Gyroscope Uncalibrated X-axis speed of a " + Build.MANUFACTURER + " " + Build.MODEL + " Android device");
+                    sendMessageToMobile(TopicUtil.getTopic(TopicUtil.TOPIC_TYPE_MNF, sCenterGUID, sensorGUID), new Gson().toJson(senMnf));
+                    sensorGUID = GUIDUtil.getGUID();
+                    addSensorGUID(sensorGUID, sensorType, "y_speed");
+                    senMnf.setName(sensor.getName() + "_Y_Speed");
+                    senMnf.setDescription("Gyroscope Uncalibrated Y-axis speed of a " + Build.MANUFACTURER + " " + Build.MODEL + " Android device");
+                    sendMessageToMobile(TopicUtil.getTopic(TopicUtil.TOPIC_TYPE_MNF, sCenterGUID, sensorGUID), new Gson().toJson(senMnf));
+                    sensorGUID = GUIDUtil.getGUID();
+                    addSensorGUID(sensorGUID, sensorType, "z_bias");
+                    senMnf.setName(sensor.getName() + "_Z_Speed");
+                    senMnf.setDescription("Gyroscope Uncalibrated Z-axis speed of a " + Build.MANUFACTURER + " " + Build.MODEL + " Android device");
+                    sendMessageToMobile(TopicUtil.getTopic(TopicUtil.TOPIC_TYPE_MNF, sCenterGUID, sensorGUID), new Gson().toJson(senMnf));
+                    sensorGUID = GUIDUtil.getGUID();
+                    addSensorGUID(sensorGUID, sensorType, "x_drift");
+                    senMnf.setName(sensor.getName() + "_X_Drift");
+                    senMnf.setDescription("Gyroscope Uncalibrated X-axis drift of a " + Build.MANUFACTURER + " " + Build.MODEL + " Android device");
+                    sendMessageToMobile(TopicUtil.getTopic(TopicUtil.TOPIC_TYPE_MNF, sCenterGUID, sensorGUID), new Gson().toJson(senMnf));
+                    sensorGUID = GUIDUtil.getGUID();
+                    addSensorGUID(sensorGUID, sensorType, "y_drift");
+                    senMnf.setName(sensor.getName() + "_Y_Drift");
+                    senMnf.setDescription("Gyroscope Uncalibrated Y-axis drift of a " + Build.MANUFACTURER + " " + Build.MODEL + " Android device");
+                    sendMessageToMobile(TopicUtil.getTopic(TopicUtil.TOPIC_TYPE_MNF, sCenterGUID, sensorGUID), new Gson().toJson(senMnf));
+                    sensorGUID = GUIDUtil.getGUID();
+                    addSensorGUID(sensorGUID, sensorType, "z_drift");
+                    senMnf.setName(sensor.getName() + "_Z_Drift");
+                    senMnf.setDescription("Gyroscope Uncalibrated Z-axis drift of a " + Build.MANUFACTURER + " " + Build.MODEL + " Android device");
+                    sendMessageToMobile(TopicUtil.getTopic(TopicUtil.TOPIC_TYPE_MNF, sCenterGUID, sensorGUID), new Gson().toJson(senMnf));
+                }
             } else if (sensorType == SensorTypeKeys.SENS_HUMIDITY) {
-                sensorGUID = GUIDUtil.getGUID();
-                addSensorGUID(sensorGUID, sensorType, "humidity");
-                senMnf.setName(sensor.getName());
-                senMnf.setType("" + sensor.getType());
-                senMnf.setDescription("Humidity of a " + Build.MANUFACTURER + " " + Build.MODEL + " " + Build.USER + " Android device");
-                sendMessageToMobile(TopicUtil.getTopic(TopicUtil.TOPIC_TYPE_MNF, sCenterGUID, senMnf.getName()), new Gson().toJson(senMnf));
+                sensorGUID = getSensorGUID(sensorType, "humidity");
+                if (sensorGUID == null || sensorGUID.equals("")) {
+                    senMnf.setType("sensor");
+                    senMnf.setValueType("float");
+                    sensorGUID = GUIDUtil.getGUID();
+                    addSensorGUID(sensorGUID, sensorType, "humidity");
+                    senMnf.setName(sensor.getName());
+                    senMnf.setDescription("Humidity of a " + Build.MANUFACTURER + " " + Build.MODEL + " Android device");
+                    sendMessageToMobile(TopicUtil.getTopic(TopicUtil.TOPIC_TYPE_MNF, sCenterGUID, sensorGUID), new Gson().toJson(senMnf));
+                }
             } else if (sensorType == SensorTypeKeys.SENS_HEARTRATE) {
-                sensorGUID = GUIDUtil.getGUID();
-                addSensorGUID(sensorGUID, sensorType, "bpm");
-                senMnf.setName(sensor.getName());
-                senMnf.setType("" + sensor.getType());
-                senMnf.setDescription("Heartrate of a " + Build.MANUFACTURER + " " + Build.MODEL + " " + Build.USER + " Android device");
-                sendMessageToMobile(TopicUtil.getTopic(TopicUtil.TOPIC_TYPE_MNF, sCenterGUID, senMnf.getName()), new Gson().toJson(senMnf));
+                sensorGUID = getSensorGUID(sensorType, "heartrate");
+                if (sensorGUID == null || sensorGUID.equals("")) {
+                    senMnf.setType("sensor");
+                    senMnf.setValueType("float");
+                    sensorGUID = GUIDUtil.getGUID();
+                    addSensorGUID(sensorGUID, sensorType, "heartrate");
+                    senMnf.setName(sensor.getName());
+                    senMnf.setDescription("Heartrate of a " + Build.MANUFACTURER + " " + Build.MODEL + " Android device");
+                    sendMessageToMobile(TopicUtil.getTopic(TopicUtil.TOPIC_TYPE_MNF, sCenterGUID, sensorGUID), new Gson().toJson(senMnf));
+                }
             } else if (sensorType == SensorTypeKeys.SENS_PRESSURE) {
-                sensorGUID = GUIDUtil.getGUID();
-                addSensorGUID(sensorGUID, sensorType, "pressure");
-                senMnf.setName(sensor.getName());
-                senMnf.setType("" + sensor.getType());
-                senMnf.setDescription("Pressure of a " + Build.MANUFACTURER + " " + Build.MODEL + " " + Build.USER + " Android device");
-                sendMessageToMobile(TopicUtil.getTopic(TopicUtil.TOPIC_TYPE_MNF, sCenterGUID, senMnf.getName()), new Gson().toJson(senMnf));
+                sensorGUID = getSensorGUID(sensorType, "pressure");
+                if (sensorGUID == null || sensorGUID.equals("")) {
+                    senMnf.setType("sensor");
+                    senMnf.setValueType("float");
+                    sensorGUID = GUIDUtil.getGUID();
+                    addSensorGUID(sensorGUID, sensorType, "pressure");
+                    senMnf.setName(sensor.getName());
+                    senMnf.setDescription("Pressure of a " + Build.MANUFACTURER + " " + Build.MODEL + " Android device");
+                    sendMessageToMobile(TopicUtil.getTopic(TopicUtil.TOPIC_TYPE_MNF, sCenterGUID, sensorGUID), new Gson().toJson(senMnf));
+                }
             } else if (sensorType == SensorTypeKeys.SENS_PROXIMITY) {
-                sensorGUID = GUIDUtil.getGUID();
-                addSensorGUID(sensorGUID, sensorType, "proximity");
-                senMnf.setName(sensor.getName());
-                senMnf.setType("" + sensor.getType());
-                senMnf.setDescription("Proximity of a " + Build.MANUFACTURER + " " + Build.MODEL + " " + Build.USER + " Android device");
-                sendMessageToMobile(TopicUtil.getTopic(TopicUtil.TOPIC_TYPE_MNF, sCenterGUID, senMnf.getName()), new Gson().toJson(senMnf));
+                sensorGUID = getSensorGUID(sensorType, "proximity");
+                if (sensorGUID == null || sensorGUID.equals("")) {
+                    senMnf.setType("sensor");
+                    senMnf.setValueType("float");
+                    sensorGUID = GUIDUtil.getGUID();
+                    addSensorGUID(sensorGUID, sensorType, "proximity");
+                    senMnf.setName(sensor.getName());
+                    senMnf.setDescription("Proximity of a " + Build.MANUFACTURER + " " + Build.MODEL + " Android device");
+                    sendMessageToMobile(TopicUtil.getTopic(TopicUtil.TOPIC_TYPE_MNF, sCenterGUID, sensorGUID), new Gson().toJson(senMnf));
+                }
             } else if (sensorType == SensorTypeKeys.SENS_STEP_COUNTER) {
-                sensorGUID = GUIDUtil.getGUID();
-                addSensorGUID(sensorGUID, sensorType, "steps");
-                senMnf.setName(sensor.getName());
-                senMnf.setType("" + sensor.getType());
-                senMnf.setDescription("Step Counter of a " + Build.MANUFACTURER + " " + Build.MODEL + " " + Build.USER + " Android device");
-                sendMessageToMobile(TopicUtil.getTopic(TopicUtil.TOPIC_TYPE_MNF, sCenterGUID, senMnf.getName()), new Gson().toJson(senMnf));
+                sensorGUID = getSensorGUID(sensorType, "steps");
+                if (sensorGUID == null || sensorGUID.equals("")) {
+                    senMnf.setType("sensor");
+                    senMnf.setValueType("float");
+                    sensorGUID = GUIDUtil.getGUID();
+                    addSensorGUID(sensorGUID, sensorType, "steps");
+                    senMnf.setName(sensor.getName());
+                    senMnf.setDescription("Step Counter of a " + Build.MANUFACTURER + " " + Build.MODEL + " Android device");
+                    sendMessageToMobile(TopicUtil.getTopic(TopicUtil.TOPIC_TYPE_MNF, sCenterGUID, sensorGUID), new Gson().toJson(senMnf));
+                }
             } else if (sensorType == SensorTypeKeys.SENS_STEP_DETECTOR) {
-                sensorGUID = GUIDUtil.getGUID();
-                addSensorGUID(sensorGUID, sensorType, "stepped");
-                senMnf.setName(sensor.getName());
-                senMnf.setType("" + sensor.getType());
-                senMnf.setDescription("Step Detector of a " + Build.MANUFACTURER + " " + Build.MODEL + " " + Build.USER + " Android device");
-                sendMessageToMobile(TopicUtil.getTopic(TopicUtil.TOPIC_TYPE_MNF, sCenterGUID, senMnf.getName()), new Gson().toJson(senMnf));
+                sensorGUID = getSensorGUID(sensorType, "stepped");
+                if (sensorGUID == null || sensorGUID.equals("")) {
+                    senMnf.setType("sensor");
+                    senMnf.setValueType("float");
+                    sensorGUID = GUIDUtil.getGUID();
+                    addSensorGUID(sensorGUID, sensorType, "stepped");
+                    senMnf.setName(sensor.getName());
+                    senMnf.setDescription("Step Detector of a " + Build.MANUFACTURER + " " + Build.MODEL + " Android device");
+                    sendMessageToMobile(TopicUtil.getTopic(TopicUtil.TOPIC_TYPE_MNF, sCenterGUID, sensorGUID), new Gson().toJson(senMnf));
+                }
             } else if (sensorType == SensorTypeKeys.SENS_SIGNIFICANT_MOTION) {
-                sensorGUID = GUIDUtil.getGUID();
-                addSensorGUID(sensorGUID, sensorType, "moved");
-                senMnf.setName(sensor.getName());
-                senMnf.setType("" + sensor.getType());
-                senMnf.setDescription("Significant Motion of a " + Build.MANUFACTURER + " " + Build.MODEL + " " + Build.USER + " Android device");
-                sendMessageToMobile(TopicUtil.getTopic(TopicUtil.TOPIC_TYPE_MNF, sCenterGUID, senMnf.getName()), new Gson().toJson(senMnf));
+                sensorGUID = getSensorGUID(sensorType, "moved");
+                if (sensorGUID == null || sensorGUID.equals("")) {
+                    senMnf.setType("sensor");
+                    senMnf.setValueType("float");
+                    sensorGUID = GUIDUtil.getGUID();
+                    addSensorGUID(sensorGUID, sensorType, "moved");
+                    senMnf.setName(sensor.getName());
+                    senMnf.setDescription("Significant Motion of a " + Build.MANUFACTURER + " " + Build.MODEL + " Android device");
+                    sendMessageToMobile(TopicUtil.getTopic(TopicUtil.TOPIC_TYPE_MNF, sCenterGUID, sensorGUID), new Gson().toJson(senMnf));
+                }
             }
         }
     }
@@ -770,7 +789,7 @@ public class SensorServiceWear extends Service implements SensorEventListener {
     public void addSensorGUID(String GUID, int sensorType, String sensorValueName) {
         HashMap<String, String> dataGUIDmap = new HashMap<>();
         if (sensorMap.containsKey(sensorType)) {
-            dataGUIDmap = (HashMap<String,String>) sensorMap.get(sensorType);
+            dataGUIDmap = sensorMap.get(sensorType);
         }
         dataGUIDmap.put(sensorValueName, GUID);
         sensorMap.put(sensorType, dataGUIDmap);
@@ -784,8 +803,8 @@ public class SensorServiceWear extends Service implements SensorEventListener {
      */
     public String getSensorGUID(int sensorType, String sensorValueName) {
         if (sensorMap.containsKey(sensorType)) {
-            if (((HashMap<String,String>)sensorMap.get(sensorType)).containsKey(sensorValueName)) {
-                return ((HashMap<String,String>)sensorMap.get(sensorType)).get(sensorValueName);
+            if ((sensorMap.get(sensorType)).containsKey(sensorValueName)) {
+                return (sensorMap.get(sensorType)).get(sensorValueName);
             }
         }
         return null;
@@ -814,8 +833,11 @@ public class SensorServiceWear extends Service implements SensorEventListener {
      */
     public void sendSensorData(final int sensorType, final String sensorGUID, final String values) {
         long t = System.currentTimeMillis();
+        long lastTimestamp = 0;
 
-        long lastTimestamp = lastSensorData.get(sensorType);
+        if(lastSensorData.containsKey(sensorGUID)) {
+            lastTimestamp = lastSensorData.get(sensorGUID);
+        }
         long timeAgo = t - lastTimestamp;
 
         if (lastTimestamp != 0) {
@@ -824,7 +846,7 @@ public class SensorServiceWear extends Service implements SensorEventListener {
             }
         }
 
-        lastSensorData.put(sensorType, t);
+        lastSensorData.put(sensorGUID, t);
 
         executorService.submit(new Runnable() {
             @Override

@@ -8,6 +8,7 @@ public class SensorActorManifest {
     private String name;
     private String type;
     private String description;
+    private String valueType;
 
     public String getName() {
         return name;
@@ -31,5 +32,13 @@ public class SensorActorManifest {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public String getValueType() {
+        return valueType;
+    }
+
+    public void setValueType(String valueType) {
+        this.valueType = valueType;
     }
 }

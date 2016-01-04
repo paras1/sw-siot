@@ -37,10 +37,13 @@ import net.siot.android.gateway.util.TopicUtil;
  */
 public class PhoneSensorPublisherActivity extends AppCompatActivity implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener{
 
-    private final static String MSG_PATH_SEND_DATA = "sendMessage";
-    private final static String MSG_PATH_CONNECT = "connectToSiot";
-    private final static String MSG_PATH_DISCONNECT = "disconnectFromSiot";
-    private final static String MSG_PATH_START_APP = "startPhoneSensorPublisher";
+    private static final String TAG = "SensorPub/PSPActivity";
+    public static final String PREFS_NAME = "siotnetPrefs";
+
+    private static final String MSG_PATH_SEND_DATA = "sendMessage";
+    private static final String MSG_PATH_CONNECT = "connectToSiot";
+    private static final String MSG_PATH_DISCONNECT = "disconnectFromSiot";
+    private static final String MSG_PATH_START_APP = "startPhoneSensorPublisher";
 
     public String sLicense;
 
@@ -104,9 +107,6 @@ public class PhoneSensorPublisherActivity extends AppCompatActivity implements G
     private boolean isRunOnBackground;
 
     private SiotNetGatewayManagerMobile sngwmgr;
-
-    private static final String TAG = "SensorPub/PSPActivity";
-    public static final String PREFS_NAME = "siotnetPrefs";
 
     /**
      * Creates the activity. Instantiates SiotNetGateway.
@@ -650,7 +650,7 @@ public class PhoneSensorPublisherActivity extends AppCompatActivity implements G
             stepCounterSwitch.setClickable(false);
             stepCounterSwitch.setVisibility(stepCounterSwitch.GONE);
         }
-
+/*
         geomagneticSwitch = (Switch) findViewById(R.id.geomagneticSwitch);
         if (sngwmgr.getSensorService().geomagneticSensor != null) {
             geomagneticSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -672,7 +672,7 @@ public class PhoneSensorPublisherActivity extends AppCompatActivity implements G
             geomagneticSwitch.setClickable(false);
             geomagneticSwitch.setVisibility(geomagneticSwitch.GONE);
         }
-
+*/
         heartrateSwitch = (Switch) findViewById(R.id.heartrateSwitch);
         if (sngwmgr.getSensorService().heartrateSensor != null) {
             heartrateSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {

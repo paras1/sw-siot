@@ -1,6 +1,5 @@
 package net.siot.android.sensorpublisher;
 
-import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -9,6 +8,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.StrictMode;
 import android.support.v4.content.LocalBroadcastManager;
+import android.support.wearable.activity.WearableActivity;
 import android.support.wearable.view.WatchViewStub;
 import android.util.Log;
 import android.view.View;
@@ -33,7 +33,7 @@ import java.util.concurrent.TimeUnit;
  * Created by Sathesh Paramasamy on 15.12.15.
  * SensorPublisher App for android wear devices
  */
-public class WearSensorPublisherActivity extends Activity implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
+public class WearSensorPublisherActivity extends WearableActivity implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
 
     private final static long CONNECTION_TIME_OUT_MS = 100;
     private final static String MSG_PATH_SEND_DATA = "sendMessage";
@@ -110,6 +110,7 @@ public class WearSensorPublisherActivity extends Activity implements GoogleApiCl
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_wear_sensor_publisher);
+        setAmbientEnabled();
 
         IntentFilter intentFilter = new IntentFilter(Intent.ACTION_SEND);
         MessageReceiver messageReceiver = new MessageReceiver();
@@ -594,7 +595,7 @@ public class WearSensorPublisherActivity extends Activity implements GoogleApiCl
             stepCounterSwitch.setClickable(false);
             stepCounterSwitch.setVisibility(stepCounterSwitch.GONE);
         }
-
+/*
         geomagneticSwitch = (Switch) findViewById(R.id.geomagneticSwitch);
         if (sngwmgr.getSensorService().geomagneticSensor != null) {
             geomagneticSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -616,7 +617,7 @@ public class WearSensorPublisherActivity extends Activity implements GoogleApiCl
             geomagneticSwitch.setClickable(false);
             geomagneticSwitch.setVisibility(geomagneticSwitch.GONE);
         }
-
+*/
         heartrateSwitch = (Switch) findViewById(R.id.heartrateSwitch);
         if (sngwmgr.getSensorService().heartrateSensor != null) {
             heartrateSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -735,8 +736,8 @@ public class WearSensorPublisherActivity extends Activity implements GoogleApiCl
                 //String value = intent.getStringExtra("value");
                 Log.i(TAG, "connect wear sensor to mobile gateway");
                 //Toast.makeText(getApplicationContext(), "Connecting to siot.net", Toast.LENGTH_SHORT).show();
-                sngwmgr.connectToMobile(intent.getStringExtra("value"));
-                enableSensorSwitches();
+                if(sngwmgr.connectToMobile(intent.getStringExtra("value")))
+                    enableSensorSwitches();
                 Log.i(TAG, "Source NodeId: " + intent.getStringExtra("nodeId"));
 
             } else if (path.equals(MSG_PATH_DISCONNECT)) {

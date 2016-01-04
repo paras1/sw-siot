@@ -106,6 +106,18 @@ public class SiotNetGatewayManagerMobile {
         return mqttClient.isConnected();
     }
 
+    public void publishData(String topic, String data){
+        if(mqttClient.isConnected()){
+            mqttClient.publishData(topic, data);
+        }
+    }
+
+    public void subscribeData(String topic) {
+        if(mqttClient.isConnected()){
+            mqttClient.subscribeData(topic);
+        }
+    }
+
     //Getter and Setters
 
     /**
