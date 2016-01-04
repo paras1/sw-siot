@@ -56,6 +56,7 @@
 \usepackage{dirtree}			% create directory trees
 \usepackage{listings}			% include source code
 \usepackage{epstopdf}			% convert eps graphics to pdf
+\usepackage{colortbl}
 %---------------------------------------------------------------------------
 
 % Load Math Packages
@@ -245,11 +246,13 @@
 %---------------------------------------------------------------------------
 \tableofcontents
 \listoffigures
+\listoftables
 \cleardoublepage
 %---------------------------------------------------------------------------
 
 \pagenumbering{arabic}
-\settocdepth{subsection}		% Set depth of toc
+\settocdepth{subsubsection}		% Set depth of toc
+\setcounter{secnumdepth}{3}
 
 % Main part - Part I
 %---------------------------------------------------------------------------
@@ -261,25 +264,40 @@
 \onecolumn
 \include{02_Grundlagen/01_Grundlagen}
 
-% Main part - Part II
+% Main part - Part III
 %---------------------------------------------------------------------------
 \onecolumn
 \include{03_Analyse_Marktsegment_SW_IoT/01_Marktsegmente}
 
-% Main part - Part III
+% Main part - Part IV
 %---------------------------------------------------------------------------
 \onecolumn
 \include{04_Analyse_Anwendungen_SW_IoT/01_Anwendungen}
 
-% Main part - Part IV
+% Main part - Part V
 %---------------------------------------------------------------------------
 \onecolumn
 \include{05_Technische_Anforderungen/01_Technische_Anforderung_an_SW}
 
-% Main part - Part 5V
+% Main part - Part VI
 %---------------------------------------------------------------------------
 \onecolumn
 \include{06_Evaluation_SW_Produkte/01_Evaluation_SW_Produkte}
+
+% Main part - Part VII
+%---------------------------------------------------------------------------
+\onecolumn
+\include{07_Architektur/01_Architektur}
+
+% Main part - Part VIII
+%---------------------------------------------------------------------------
+\onecolumn
+\include{08_Requirements/01_Anforderungsdokumente}
+
+% Main part - Part VIII
+%---------------------------------------------------------------------------
+\onecolumn
+\include{09_Softwaredesign/01_Softwaredesign}
 
 %---------------------------------------------------------------------------
 

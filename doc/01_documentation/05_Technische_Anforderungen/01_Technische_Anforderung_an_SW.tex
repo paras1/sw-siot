@@ -6,7 +6,7 @@ Die Technischen Anforderungen für die Bedürfnisse Gesundheit, Smart Home und F
 
 \subsection{Gesundheit}
 Bei den Gesundheitsapplikationen ist es wichtig, dass die Smartwatch über einen Herzfrequenzmesser verfügt und die Kombination aus Gyroskop, Rotationssensor und Bewegungssensor eingebaut ist.
-Diese Elemente sind erforderlich um Pulsraten eines Menschen zu messen, sowie Analysen von Bewegungen zu ermitteln.
+Diese Elemente sind erforderlich um Pulsraten eines Menschen zu messen, sowie Analysen von Bewegungen zu erstellen.
 
 \textbf{Benötigte Sensoren:}\\
 - Gyroskop\\
@@ -15,13 +15,17 @@ Diese Elemente sind erforderlich um Pulsraten eines Menschen zu messen, sowie An
 - Herzfrequenzmesser
 
 \subsection{Smart Home}
-Für die Steuerung von Haushaltsgeräte, Heizung oder Licht wird vorallem ein Steuerungsanzeige benötigt. Dies ermöglicht die Apparate ein- und auszuschalten, die Beleuchtung zu dimmen und Benachrichtigungen (z.B. von offenem Fenster, beendetem Waschgang uvm.) anzuzeigen. Für eine automatische Helligkeitsregulierung sollte noch ein Lichtmesser eingebaut sein.
+Für die Steuerung von Haushaltsgeräte, Heizung oder Licht wird vorallem ein Steuerungsanzeige benötigt. Dies ermöglicht die Apparate ein- und auszuschalten, die Beleuchtung zu dimmen und Benachrichtigungen (z.B. von offenem Fenster, beendetem Waschgang uvm.) anzuzeigen. Für eine automatische Helligkeitsregulierung sollte ein Lichtmesser eingebaut sein. Um für Alarme auszugeben ist ein Lautsprecher oder Vibrationsmotor hilfreich.
 
 \textbf{Bedienelement:}\\
--Touchscreen
+- Touchscreen
+
+\textbf{Aktoren:}\\
+- Lautsprecher\\
+- Vibrationsmotor
 
 \textbf{Benötigter Sensor:}\\
--Lichtsensor
+- Lichtsensor
 
 \subsection{Finanztechnologie - FinTech}
 Für Geld Transaktionen zu führen wird eine drahtlose Verbindungsart vorausgesetzt. Transaktionen werden Bereits erwähnte Applikationen wie Apple Pay und Google Wallet verwenden den NFC (Near Field Communication) Chip und TWINT verwendet Bluetooth. Die Kommunikationsschnittstelle ist notwendig um Zahlungsanforderungen zu erhalten und diese auch zu authorisieren. Zum auswählen von Zahlungsoptionen und bestätigen von Überweisungen ist ein Bedienelement notwendig. Wenn mehrere Kreditkarten hinterlegt wären, muss der Anwender die Möglichkeit haben, um eine davon auszuwählen für die Überweisung.
@@ -35,7 +39,7 @@ Für Geld Transaktionen zu führen wird eine drahtlose Verbindungsart vorausgese
 \textbf{Mögliche Bedienelemente:}\\
 - Touchscreen (beste Vorraussetzung)\\
 - Mikrofon zur Sprachsteuerung\\
-- Physische Taste\\
+- Physische Taste
 
 \section{siot.net Applikationen Anforderungen}
 Technische Voraussetzung für die siot.net Applikationen werden für alle in der Bedürfnisanalyse ermittelten Klassen definiert.
@@ -49,12 +53,12 @@ Die Bibliothek, welche smarte Geräte an die siot.net Plattform anbinden soll, w
 - GSM/UMTS/LTE\\
 - Wireless LAN
 
-\textbf{Betriebssystem:}
-- ab Android 4.4
+\textbf{Betriebssystem:}\\
+- ab Android 5.0\\
 - ab SDK Tools Version 22 (Android Tools)
 
-\subsection{siot.net Dashboard App}
-Um auch Sensordaten von der siot.net Plattform darzustellen eignet sich eine Dashboard App. Auch diese wird vorraussichtlich nur für Android Geräte implementiert. Für die Darstellung einer derartigen digitalen Instrumententafel eignet sich ein Display, bevorzugt ein Touchscreen. Ein Berührbildschirm erlaubt es die gewünschten Anzeigen bequem einzublenden. Eine weitere Voraussetzung ist die Vernetzung. Das Gerät muss einen Zugang zum Internet herstellen können. Nur durch eine erfolgreiche Anmeldung an den siot.net MQTT Broker, können die Informationen empfangen werden.
+\subsection{siot.net Sensorcenter}
+Die Sensorcenter App für Android Geräte soll ermöglichen, die dem Gerät verfügbaren Sensoren, dem siot.net zur Verfügung zu stellen. Die Applikation muss sich mit dem siot.net koppeln, Sensoren manifestieren und Sensordaten senden können. Diese App kann vom Bestehen der siot.net Gateway Library profitieren, welche integriert wird. Technisch benötigt diese Applikation, zusätzlich zu den Voraussetzungen der siot.net Gateway Library, ein Touchscreen.
 
 \textbf{Auswahl von benötigten Kommunikationsschnittstellen:}\\
 - NFC Chip\\
@@ -63,13 +67,66 @@ Um auch Sensordaten von der siot.net Plattform darzustellen eignet sich eine Das
 - Wireless LAN
 
 \textbf{Bevorzugtes Bedienelement:}\\
-- Touchscreen\\
+- Touchscreen
 
-\textbf{Betriebssystem:}
-- ab Android 4.4
+\textbf{Betriebssystem:}\\
+- ab Android 5.0\\
+- ab SDK Tools Version 22 (Android Tools)
+
+\subsection{siot.net Dashboard App}
+Um Sensordaten von der siot.net Plattform darzustellen eignet sich eine Dashboard App. Diese wird in dieser Arbeit vorraussichtlich nur für Android Geräte in betracht gezogen. Für die Darstellung einer derartigen digitalen Instrumententafel eignet sich ein Display, bevorzugt ein Touchscreen. Ein Berührbildschirm erlaubt es die gewünschten Anzeigen bequem einzublenden. Eine weitere Voraussetzung ist die Vernetzung. Das Gerät muss einen Zugang zum Internet herstellen können. Nur durch eine erfolgreiche Anmeldung an den siot.net MQTT Broker, können die Informationen empfangen werden.
+
+\textbf{Auswahl von benötigten Kommunikationsschnittstellen:}\\
+- NFC Chip\\
+- Bluetooth\\
+- GSM/UMTS/LTE\\
+- Wireless LAN
+
+\textbf{Bevorzugtes Bedienelement:}\\
+- Touchscreen
+
+\textbf{Betriebssystem:}\\
+- ab Android 5.0\\
 - ab SDK Tools Version 22 (Android Tools)
 
 \subsection{Herzfrequenz Überwachung}
+Die Herzfrenquenz Überwachung ist eine schlanke Variante des Dashboards. Um eine Anzeige wie bei einem Elektrokardiogramm (EKG) darzustellen braucht es ein Display. Und um Daten zu erhalten braucht es einen Herzfrequenzmesser. Um bei Überschreitung von definierten Werten einen Alarm auszulösen, braucht es womöglich noch Lautsprecher um akustische Signale auszusenden oder einen Vibrationsmotor für lautlose Anmeldungen.
+
+\textbf{Auswahl von benötigten Kommunikationsschnittstellen:}\\
+- Bluetooth\\
+- GSM/UMTS/LTE\\
+- Wireless LAN
+
+\textbf{Bevorzugtes Anzeigen / Aktoren:}\\
+- Touchscreen\\
+- Lautsprecher
+
+\textbf{Sensoren:}\\
+- Herzfrequenzmesser
+
+\textbf{Betriebssystem:}\\
+- ab Android 5.0\\
+- ab SDK Tools Version 22 (Android Tools)
 
 \subsection{Steuerung von Modellen}
+Für die Kontrolle über ein Modellfahrzeug oder Modellflugzeug zu erhalten, benötigt dieses einen Hardwarekontroller, welcher sich mit dem siot.net MQTT Broker verbinden kann. Die Steuerungseinheit muss auf die MQTT Topic subscriben und die empfangenen Bewegungsdaten interpretieren und an die erforderlichen Antriebsmotoren und Servos weitergeben. Als Kontroller könnte ein Raspberry Pi Zero oder ähnliches zum Tragen kommen. Auf den Hardwarekontroller wird nicht weiter eingegangen. Als Sender und Ermittler der Bewegungs- und Beschleunigungsdaten kommt ein Android Device (mit siot.net Sensorcenter) zum Einsatz.
+
+\textbf{Auswahl von benötigten Kommunikationsschnittstellen:}\\
+- Bluetooth\\
+- GSM/UMTS/LTE\\
+- Wireless LAN
+
+\textbf{Bevorzugtes Anzeigen / Aktoren:}\\
+- Touchscreen\\
+- Lautsprecher
+
+\textbf{Sensoren:}\\
+- Bewegungssensor\\
+- Beschleunigungsensor\\
+- Gyroskop
+
+\textbf{Betriebssystem:}\\
+- ab Android 5.0\\
+- ab SDK Tools Version 22 (Android Tools)
+
 \newpage
