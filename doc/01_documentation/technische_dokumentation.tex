@@ -9,6 +9,7 @@
 %---------------------------------------------------------------------------
 \def \module		{Bachelor Thesis}					% Module name
 \def \title			{Smartwatches in siot.net}		% Title
+\def \titleborder {Bachelor Thesis im Studiengang Informatik an der Berner Fachhochschule}
 \def \version		{X1.0}
 \def \author		{Sathesh Paramasamy}
 \def \logo			{BFH_Logo_C_de_fr_en_100_4CU}	% choose the correct logo in
@@ -212,9 +213,7 @@
 
 % Use this for one-sided:
 	\fancyfoot[L]{\footnotesize					% footer left part -->	version
-		\version \\
-		\author \\
-		\today
+		\title \\
 	}
 	\fancyfoot[R]{\footnotesize \thepage}		% footer right part --> page number
 	\fancyhead[C]{}						% header right part --> module name
@@ -245,8 +244,6 @@
 % Table of contents and listings
 %---------------------------------------------------------------------------
 \tableofcontents
-\listoffigures
-\listoftables
 \cleardoublepage
 %---------------------------------------------------------------------------
 
@@ -299,7 +296,20 @@
 \onecolumn
 \include{09_Softwaredesign/01_Softwaredesign}
 
+% Appendix
 %---------------------------------------------------------------------------
+\cleardoublepage
+\appendix
+
+\renewcommand\listfigurename{A. Abbildungsverzeichnis}
+\addcontentsline{toc}{chapter}{\texorpdfstring{\listfigurename}{Abbildungsverzeichnis}}
+\listoffigures
+
+\renewcommand\listtablename{B. Tabellenverzeichnis}
+\addcontentsline{toc}{chapter}{\texorpdfstring{\listtablename}{Tabellenverzeichnis}}
+\listoftables
+\setcounter{chapter}{1}
+
 
 %---------------------------------------------------------------------------
 
