@@ -18,13 +18,12 @@ public class TopicUtil {
     public static String PREFIX_DAT = "siot/DAT";
 
     /**
-     * Getter for MQTT topic without siot.net IoT center GUID
-     * @param topicType topic type: Manifest, Config, Data, Trigger
+     * Getter for MQTT topic without siot.net IoT center GUID, use only for Trigger issues
      * @param GUID sensor/actor GUID
      * @return absolut topic path
      */
-    public static String getTopic(int topicType, String GUID) {
-        return getTopic(topicType, null, GUID);
+    public static String getTopic(String GUID) {
+        return getTopic(TOPIC_TYPE_TRG, null, GUID);
     }
 
     /**

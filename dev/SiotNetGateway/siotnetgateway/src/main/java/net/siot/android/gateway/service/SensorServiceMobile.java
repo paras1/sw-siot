@@ -55,9 +55,9 @@ public class SensorServiceMobile extends Service implements SensorEventListener 
     public Sensor stepCounterSensor;
     public Sensor stepDetectorSensor;
 
-    HashMap<Integer, HashMap<String, String>> sensorMap = new HashMap();
+    private HashMap<Integer, HashMap<String, String>> sensorMap = new HashMap();
 
-    MQTTClient mqttClient;
+    private MQTTClient mqttClient;
 
     private Context ctx;
 
@@ -787,7 +787,7 @@ public class SensorServiceMobile extends Service implements SensorEventListener 
      * @param sensorType sensor type
      * @param sensorValueName value name description (e.g. "x" or "pressure")
      */
-    public void addSensorGUID(String GUID, int sensorType, String sensorValueName) {
+    private void addSensorGUID(String GUID, int sensorType, String sensorValueName) {
         HashMap<String, String> dataGUIDmap = new HashMap<>();
         if (sensorMap.containsKey(sensorType)) {
             dataGUIDmap = sensorMap.get(sensorType);
@@ -802,7 +802,7 @@ public class SensorServiceMobile extends Service implements SensorEventListener 
      * @param sensorValueName value name description (e.g. "y" or "proximity")
      * @return
      */
-    public String getSensorGUID(int sensorType, String sensorValueName) {
+    private String getSensorGUID(int sensorType, String sensorValueName) {
         if (sensorMap.containsKey(sensorType)) {
             if ((sensorMap.get(sensorType)).containsKey(sensorValueName)) {
                 return (sensorMap.get(sensorType)).get(sensorValueName);

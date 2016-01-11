@@ -22,9 +22,9 @@ public broker and topic you can use for testing.
 */
 
 //settings BEGIN
-	var MQTTbroker = 'test.mosquitto.org';
-	var MQTTport = 8080;
-	var MQTTsubTopic = 'SPA/TEST/AndroidSW/DAT/#'; //works with wildcard # and + topics dynamically now
+	var MQTTbroker = 'india313.startdedicated.de';
+	var MQTTport = 9872;
+	var MQTTsubTopic = 'siot/DAT/4DBF-610C-9C10-4C6C-A4ED-B9BD-246B-E147/#'; //works with wildcard # and + topics dynamically now
 //settings END
 
 	var chart; // global variuable for chart
@@ -61,6 +61,7 @@ public broker and topic you can use for testing.
 //what is done when a message arrives from the broker
 	function onMessageArrived(message) {
 		//console.log(message.destinationName, '',message.payloadString);
+/* Use only for Combination of sensors with 3 types of data
 		var json = message.payloadString;
 		var obj = JSON.parse(json);
 
@@ -98,6 +99,31 @@ public broker and topic you can use for testing.
 				chart.addSeries(newseriesx); //add the series
 				chart.addSeries(newseriesy); //add the series
 				chart.addSeries(newseriesz); //add the series
+		};
+*/
+		//check if it is a new topic, if not add it to the array
+		if (dataTopics.indexOf(message.destinationName) < 0){
+
+		    dataTopics.push(message.destinationName); //add new topic to array
+		    var y = dataTopics.indexOf(message.destinationName); //get the index no
+
+		    //create new data series for the chart
+			var newseries = {
+		            id: y,
+		            name: message.destinationName,
+		            data: []
+		            };
+			chart.addSeries(newseries); //add the series
+
+		};
+
+		var y = dataTopics.indexOf(message.destinationName); //get the index no of the topic from the array
+		var myEpoch = new Date().getTime(); //get current epoch time
+		var thenum = message.payloadString.replace( /^\D+/g, ''); //remove any text spaces from the message
+		var plotMqtt = [myEpoch, Number(thenum)]; //create the array
+		if (isNumber(thenum)) { //check if it is a real number and not text
+			console.log('is a propper number, will send to chart.')
+			plot(plotMqtt, y);	//send it to the plot function
 		};
 
 		var x = dataTopics.indexOf("x"); //get the index no

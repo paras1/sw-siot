@@ -36,10 +36,10 @@ import java.util.concurrent.TimeUnit;
 public class WearSensorPublisherActivity extends WearableActivity implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
 
     private final static long CONNECTION_TIME_OUT_MS = 100;
-    private final static String MSG_PATH_SEND_DATA = "sendMessage";
-    private final static String MSG_PATH_CONNECT = "connectToSiot";
-    private final static String MSG_PATH_DISCONNECT = "disconnectFromSiot";
-    private final static String MSG_PATH_START_APP = "startPhoneSensorPublisher";
+    public final static String MSG_PATH_SEND_DATA = "sendMessage";
+    public final static String MSG_PATH_CONNECT = "connectToSiot";
+    public final static String MSG_PATH_DISCONNECT = "disconnectFromSiot";
+    public final static String MSG_PATH_START_APP = "startPhoneSensorPublisher";
 
     private LinearLayout linearLayoutSensorSwitches;
 
@@ -139,7 +139,7 @@ public class WearSensorPublisherActivity extends WearableActivity implements Goo
                 buttonConnectBroker.setOnClickListener(new View.OnClickListener() {
                     public void onClick(View v) {
                         Log.i(TAG, "CONNECT BUTTON on wear clicked");
-                        if (!isConnected) {
+                        if (!isConnected && googleApiClient.isConnected()) {
                             isConnected = true;
                             buttonConnectBroker.setText("Disconnect");
                             Wearable.MessageApi.sendMessage(googleApiClient, sGAnodeId, MSG_PATH_CONNECT, null);
@@ -156,7 +156,7 @@ public class WearSensorPublisherActivity extends WearableActivity implements Goo
                             //editTextLicense.setVisibility(editTextLicense.VISIBLE);
                             disableSensorSwitches();
                         } else {
-                            Toast.makeText(getApplicationContext(), "Please enter your siot.net license", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getApplicationContext(), "No siot.net license", Toast.LENGTH_SHORT).show();
                         }
                     }
                 });
@@ -201,23 +201,6 @@ public class WearSensorPublisherActivity extends WearableActivity implements Goo
      * Creates switches for available sensor on device and enables them.
      */
     private void enableSensorSwitches() {
-
-        allSensorsSwitch = (Switch) findViewById(R.id.allSwitch);
-        allSensorsSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (isChecked) {
-                    isAllSensorsOn = isChecked;
-                    sngwmgr.getSensorService().startAllListeners();
-                    Toast.makeText(getApplicationContext(), "The all sensors ON", Toast.LENGTH_SHORT).show();
-                } else {
-                    isAllSensorsOn = !isChecked;
-                    sngwmgr.getSensorService().stopAllListeners();
-                    Toast.makeText(getApplicationContext(), "The all sensors OFF", Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
 
         accelerometerSwitch = (Switch) findViewById(R.id.accelerometerSwitch);
         if (sngwmgr.getSensorService().accelerometerSensor != null) {
@@ -661,6 +644,24 @@ public class WearSensorPublisherActivity extends WearableActivity implements Goo
             heartrateSamsungSwitch.setClickable(false);
             heartrateSamsungSwitch.setVisibility(heartrateSamsungSwitch.GONE);
         }
+
+        allSensorsSwitch = (Switch) findViewById(R.id.allSwitch);
+        allSensorsSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) {
+                    isAllSensorsOn = isChecked;
+                    sngwmgr.getSensorService().startAllListeners();
+                    Toast.makeText(getApplicationContext(), "The all sensors ON", Toast.LENGTH_SHORT).show();
+                } else {
+                    isAllSensorsOn = !isChecked;
+                    sngwmgr.getSensorService().stopAllListeners();
+                    Toast.makeText(getApplicationContext(), "The all sensors OFF", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+
         linearLayoutSensorSwitches.setVisibility(linearLayoutSensorSwitches.VISIBLE);
     }
 

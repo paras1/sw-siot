@@ -1,8 +1,6 @@
 package net.siot.android.gateway.connection;
 
-import android.content.Context;
 import android.util.Log;
-import android.widget.Toast;
 
 import net.siot.android.gateway.util.GUIDUtil;
 
@@ -21,25 +19,30 @@ import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
 public class MQTTClient implements MqttCallback {
     private static final String TAG = "siotag/MQTTClient";
 
-
-    public static final String FILTER = "filter";
-
     private String sBrokerURL;
     private String sGUID;
 
     private MqttAsyncClient mqttClient;
 
-    private Context ctx;
+    private static MQTTClient singleton;
 
-    public MQTTClient(Context ctx, String sCenterGUID, String brokerURL) {
+    /*public MQTTClient(Context ctx, String sCenterGUID, String brokerURL) {
         this.ctx = ctx;
         this.sGUID = sCenterGUID;
         this.sBrokerURL = brokerURL;
+    }*/
+
+    private MQTTClient(){}
+
+    public static MQTTClient getInstance(){
+
+        if(singleton == null)
+            singleton = new MQTTClient();
+
+        return singleton;
     }
 
-
-
-    public void connectBroker() {
+    public void connectBroker(String sGUID, String sBrokerURL) {
         try {
             MemoryPersistence persistence = new MemoryPersistence();
             mqttClient = new MqttAsyncClient(sBrokerURL, sGUID+"_"+GUIDUtil.getGUID(), persistence);
@@ -95,7 +98,6 @@ public class MQTTClient implements MqttCallback {
 
     @Override
     public void connectionLost(Throwable cause) {
-        Toast.makeText(ctx.getApplicationContext(), "Connection lost to MQTT broker.", Toast.LENGTH_SHORT).show();
         Log.e(TAG, "Connection lost: "+cause.getMessage());
     }
 

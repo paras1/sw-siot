@@ -47,21 +47,12 @@
                 android:text="@string/info" />
 
             <Switch
-                android:id="@+id/allSwitch"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_alignParentRight="true"
-                android:layout_alignParentTop="true"
-                android:layout_marginTop="20dp"
-                android:text="All Sensors" />
-
-            <Switch
                 android:id="@+id/accelerometerSwitch"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
                 android:layout_alignParentTop="true"
-                android:layout_marginTop="5dp"
+                android:layout_marginTop="20dp"
                 android:text="Accelerometer" />
 
             <Switch
@@ -233,7 +224,16 @@
                 android:layout_alignParentRight="true"
                 android:layout_alignParentTop="true"
                 android:layout_marginTop="5dp"
-                android:text="Heartrate (only Samsung)" />
+                android:text="Heartrate" />
+
+            <Switch
+                android:id="@+id/allSwitch"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentTop="true"
+                android:layout_marginTop="5dp"
+                android:text="All Sensors" />
         </LinearLayout>
 
     </RelativeLayout>

@@ -59,11 +59,11 @@ public class SensorServiceWear extends Service implements SensorEventListener {
     public Sensor stepCounterSensor;
     public Sensor stepDetectorSensor;
 
-    HashMap<Integer, HashMap<String, String>> sensorMap = new HashMap();
+    private HashMap<Integer, HashMap<String, String>> sensorMap = new HashMap();
 
-    Context ctx;
-    GoogleApiClient googleApiClient;
-    String sGANodeId;
+    private Context ctx;
+    private GoogleApiClient googleApiClient;
+    private String sGANodeId;
 
     private String sCenterGUID;
 

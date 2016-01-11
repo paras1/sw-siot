@@ -7,7 +7,7 @@ import android.os.Bundle;
 import net.siot.android.gateway.connection.MQTTClient;
 
 /**
- * Created by Sathesh on 05.06.15.
+ * Created by Sathesh on 05.01.16.
  * Location service class is TODO
  */
 public class LocationServiceMobile implements LocationListener {

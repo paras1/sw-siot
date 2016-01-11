@@ -8,7 +8,6 @@
     xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:padding="15dp"
         tools:context=".WearSensorPublisherActivity"
         tools:deviceIds="wear_round">
 
@@ -22,7 +21,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Connect to siot.net"
-                android:layout_gravity="center_horizontal" />
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="5dp" />
 
         </LinearLayout>
 
@@ -30,18 +30,8 @@
             android:id="@+id/linearLayoutSensorSwitches"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginTop="23dp"
+            android:layout_marginTop="45dp"
             android:orientation="vertical">
-
-            <Switch
-                android:id="@+id/allSwitch"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:layout_alignParentRight="true"
-                android:layout_alignParentTop="true"
-                android:layout_marginTop="20dp"
-                android:text="All Sensors" />
 
             <Switch
                 android:id="@+id/accelerometerSwitch"
@@ -241,8 +231,18 @@
                 android:layout_alignParentRight="true"
                 android:layout_alignParentTop="true"
                 android:layout_marginTop="5dp"
-                android:layout_marginBottom="10dp"
                 android:text="Heartrate" />
+
+            <Switch
+                android:id="@+id/allSwitch"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentTop="true"
+                android:layout_marginTop="5dp"
+                android:layout_marginBottom="10dp"
+                android:text="All Sensors" />
         </LinearLayout>
 
     </RelativeLayout>

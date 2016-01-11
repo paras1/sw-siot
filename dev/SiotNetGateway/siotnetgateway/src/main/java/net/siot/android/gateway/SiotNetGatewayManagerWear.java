@@ -17,7 +17,7 @@ public class SiotNetGatewayManagerWear {
 
     private Context ctx;
 
-    SensorServiceWear sensorService;
+    public SensorServiceWear sensorService;
 
     GoogleApiClient googleApiClient;
     String sGAnodeId;
@@ -53,6 +53,27 @@ public class SiotNetGatewayManagerWear {
             Log.i(TAG, "Connection to companion mobile device could not be established");
         }
         return googleApiClient.isConnected();
+    }
+
+    /**
+     * Sends a message to the mobile to publish it to siot.net
+     * @param topic topicname in which the message should be published
+     * @param data payload
+     */
+    public void publishData(String topic, String data){
+        if(googleApiClient.isConnected()) {
+            // send custom data to siot.net
+        }
+    }
+
+    /**
+     * Sends a message to the mobile to subscribe to a topic on siot.net
+     * @param topic topicname to subscribe
+     */
+    public void subscribeData(String topic) {
+        if(googleApiClient.isConnected()) {
+            // subscribe to a topic
+        }
     }
 
     //Getter and Setters

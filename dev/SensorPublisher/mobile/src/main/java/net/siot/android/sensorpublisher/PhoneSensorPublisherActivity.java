@@ -40,12 +40,12 @@ public class PhoneSensorPublisherActivity extends AppCompatActivity implements G
     private static final String TAG = "SensorPub/PSPActivity";
     public static final String PREFS_NAME = "siotnetPrefs";
 
-    private static final String MSG_PATH_SEND_DATA = "sendMessage";
-    private static final String MSG_PATH_CONNECT = "connectToSiot";
-    private static final String MSG_PATH_DISCONNECT = "disconnectFromSiot";
-    private static final String MSG_PATH_START_APP = "startPhoneSensorPublisher";
+    public static final String MSG_PATH_SEND_DATA = "sendMessage";
+    public static final String MSG_PATH_CONNECT = "connectToSiot";
+    public static final String MSG_PATH_DISCONNECT = "disconnectFromSiot";
+    public static final String MSG_PATH_START_APP = "startPhoneSensorPublisher";
 
-    public String sLicense;
+    private String sLicense;
 
     private GoogleApiClient googleApiClient = null;
     private String sGAnodeId = null;
@@ -146,20 +146,28 @@ public class PhoneSensorPublisherActivity extends AppCompatActivity implements G
             public void onClick(View v) {
                 Log.i(TAG, "CONNECT BUTTON clicked: " + editTextLicense.getText().toString());
                 sLicense = editTextLicense.getText().toString();
-                if (!isConnected) {
+                if (!isConnected && (sLicense != null && !sLicense.equals(""))) {
+                    Toast.makeText(getApplicationContext(), "Connecting to siot.net", Toast.LENGTH_SHORT).show();
                     // try to connect to siot.net (URL service and broker)
-                    isConnected = sngwmgr.connectToSiotNet(sLicense);
-                    buttonConnectBroker.setText("Disconnect");
-                    editTextLicense.setVisibility(editTextLicense.INVISIBLE);
-                    textViewConnectionInfo.setText(Html.fromHtml("Device connected via MQTT<br>Broker URL:<br> " + sngwmgr.getMqttBrokerUrl() + "<br>ClientId:<br> " + sLicense + "<br>Topic DAT:<br> "+ TopicUtil.PREFIX_DAT+"/"+sLicense+"/#"));
-                    enableSensorSwitches();
-                    linearLayoutSensorSwitches.setVisibility(linearLayoutSensorSwitches.VISIBLE);
+                    runOnUiThread(new Runnable() {
+                        public void run() {
+                            isConnected = sngwmgr.connectToSiotNet(sLicense);
+                            if (isConnected) {
+                                buttonConnectBroker.setText("Disconnect");
+                                editTextLicense.setVisibility(editTextLicense.INVISIBLE);
+                                textViewConnectionInfo.setText(Html.fromHtml("Device connected via MQTT<br>Broker URL:<br> " + sngwmgr.getMqttBrokerUrl() + "<br>Topic DAT:<br> " + TopicUtil.PREFIX_DAT + "/" + sLicense + "/#"));
+                                enableSensorSwitches();
+                                linearLayoutSensorSwitches.setVisibility(linearLayoutSensorSwitches.VISIBLE);
 
-                    // save siot.net license to the preferences file
-                    SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
-                    SharedPreferences.Editor editor = settings.edit();
-                    editor.putString("license", sLicense);
-                    editor.commit();
+                                // save siot.net license to the preferences file
+                                SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
+                                SharedPreferences.Editor editor = settings.edit();
+                                editor.putString("license", sLicense);
+                                editor.commit();
+                            }
+                        }
+                    });
+
                 } else if(isConnected) {
                     isConnected = sngwmgr.disconnectFromSiotNet();
                     buttonConnectBroker.setText("Connect");
@@ -170,6 +178,9 @@ public class PhoneSensorPublisherActivity extends AppCompatActivity implements G
                     }
                 } else {
                     Toast.makeText(getApplicationContext(), "Please enter your siot.net license", Toast.LENGTH_SHORT).show();
+                    if (sGAnodeId != null && !sGAnodeId.equals("")) {
+                        Wearable.MessageApi.sendMessage(googleApiClient, sGAnodeId, MSG_PATH_DISCONNECT, null);
+                    }
                 }
             }
         });
@@ -213,30 +224,54 @@ public class PhoneSensorPublisherActivity extends AppCompatActivity implements G
         super.onResume();
         if(sngwmgr.getMqttClient() != null) {
             if (isConnected && !sngwmgr.getMqttClient().isConnected())
-                sngwmgr.getMqttClient().connectBroker();
+                isConnected = sngwmgr.connectToSiotNet(sLicense);
         }
 
     }
 
     /**
-     * Nothing specially to do when activity pauses
+     * Nothing specially to do when activity pauses.
      */
     @Override
-        protected void onPause() {
+    protected void onPause() {
         super.onPause();
+    }
+
+    /**
+     * On starting the GoogleApiClient thread the connection will be established.
+     */
+    @Override
+    protected void onStart() {
+        super.onStart();
+        googleApiClient.connect();
+    }
+
+    /**
+     */
+    @Override
+    protected void onStop() {
+        super.onStop();
     }
 
     /**
      * Action to do when activity is destroyed.
      * Stops all sensor listeners and closes the connection to siot.net
+     * When the GoogleApiClient thread is stopped connection will be closed.
+     * Message to Wearable will be sent to inform that the connection to siot.net has closed.
      */
     @Override
     protected void onDestroy() {
-        super.onDestroy();
+        if (googleApiClient != null && googleApiClient.isConnected()) {
+            if (sGAnodeId != null && !sGAnodeId.equals("")) {
+                Wearable.MessageApi.sendMessage(googleApiClient, sGAnodeId, MSG_PATH_DISCONNECT, null);
+            }
+            googleApiClient.disconnect();
+        }
         if (isConnected) {
             sngwmgr.getSensorService().stopAllListeners();
             sngwmgr.disconnectFromSiotNet();
         }
+        super.onDestroy();
     }
 
     /**
@@ -256,23 +291,6 @@ public class PhoneSensorPublisherActivity extends AppCompatActivity implements G
      * Creates switches for available sensor on device and enables them.
      */
     private void enableSensorSwitches() {
-
-        allSensorsSwitch = (Switch) findViewById(R.id.allSwitch);
-        allSensorsSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (isChecked) {
-                    isAllSensorsOn = isChecked;
-                    sngwmgr.getSensorService().startAllListeners();
-                    Toast.makeText(getApplicationContext(), "The all sensors ON", Toast.LENGTH_SHORT).show();
-                } else {
-                    isAllSensorsOn = !isChecked;
-                    sngwmgr.getSensorService().stopAllListeners();
-                    Toast.makeText(getApplicationContext(), "The all sensors OFF",Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
 
         accelerometerSwitch = (Switch) findViewById(R.id.accelerometerSwitch);
         if (sngwmgr.getSensorService().accelerometerSensor != null) {
@@ -716,6 +734,23 @@ public class PhoneSensorPublisherActivity extends AppCompatActivity implements G
             heartrateSamsungSwitch.setClickable(false);
             heartrateSamsungSwitch.setVisibility(heartrateSamsungSwitch.GONE);
         }
+
+        allSensorsSwitch = (Switch) findViewById(R.id.allSwitch);
+        allSensorsSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) {
+                    isAllSensorsOn = isChecked;
+                    sngwmgr.getSensorService().startAllListeners();
+                    Toast.makeText(getApplicationContext(), "The all sensors ON", Toast.LENGTH_SHORT).show();
+                } else {
+                    isAllSensorsOn = !isChecked;
+                    sngwmgr.getSensorService().stopAllListeners();
+                    Toast.makeText(getApplicationContext(), "The all sensors OFF",Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
     }
 
     /**
@@ -725,25 +760,6 @@ public class PhoneSensorPublisherActivity extends AppCompatActivity implements G
         linearLayoutSensorSwitches.setVisibility(linearLayoutSensorSwitches.GONE);
     }
 
-    /**
-     * On starting the GoogleApiClient thread the connection will be established
-     */
-    @Override
-    protected void onStart() {
-        super.onStart();
-        googleApiClient.connect();
-    }
-
-    /**
-     * When the GoogleApiClient thread is stopped connection will be closed
-     */
-    @Override
-    protected void onStop() {
-        if (googleApiClient != null && googleApiClient.isConnected()) {
-            googleApiClient.disconnect();
-        }
-        super.onStop();
-    }
 
     @Override
     public void onConnected(Bundle bundle) {
@@ -752,7 +768,9 @@ public class PhoneSensorPublisherActivity extends AppCompatActivity implements G
 
     @Override
     public void onConnectionSuspended(int i) {
-
+        if (sGAnodeId != null && !sGAnodeId.equals("")) {
+            Wearable.MessageApi.sendMessage(googleApiClient, sGAnodeId, MSG_PATH_DISCONNECT, null);
+        }
     }
 
     @Override

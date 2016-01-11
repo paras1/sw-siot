@@ -24,9 +24,10 @@ public class SiotNetGatewayManagerMobile {
     private String sURLServiceLocationPrefix = "http://url.siot.net/?licence=";
     public String sURLServiceLocation;
     public String sMqttBrokerUrl;
+    public String sLicense;
 
     public MQTTClient mqttClient;
-    SensorServiceMobile sensorService;
+    public SensorServiceMobile sensorService;
 
     /**
      * Constructor for getting an Instance of the GatewayLibrary for android mobile devices
@@ -46,25 +47,35 @@ public class SiotNetGatewayManagerMobile {
      */
     public boolean connectToSiotNet(String sLicense) {
 
+        setLicense(sLicense);
         setURLServiceLocation(sURLServiceLocationPrefix + sLicense);
         if((mqttClient == null || !mqttClient.isConnected()) && (sLicense != null && !sLicense.equals(""))) {
-            Log.i(TAG, "JSON: " + RestClient.getSiotNetBrokerUrl(sURLServiceLocation));
+            String restResponse = RestClient.getSiotNetBrokerUrl(sURLServiceLocation);
+            Log.i(TAG, "JSON: " + restResponse);
+            if (restResponse.contains("Incorrect licence")) {
+                Toast.makeText(ctx.getApplicationContext(), "Incorrect license entered", Toast.LENGTH_SHORT).show();
+                return false;
+            }
             SiotUrl siotUrl = new Gson().fromJson(RestClient.getSiotNetBrokerUrl(sURLServiceLocation), SiotUrl.class);
-            setMqttBrokerUrl("tcp://"+siotUrl.getMqtt().getUrls().get(0)+":1883");
+            if(siotUrl.getMqtt() == null || siotUrl.getMqtt().getUrls() == null || siotUrl.getMqtt().getUrls().get(0).equals("")){
+                Toast.makeText(ctx.getApplicationContext(), "Wrong license or service not reachable", Toast.LENGTH_SHORT).show();
+                return false;
+            }
+            setMqttBrokerUrl("tcp://" + siotUrl.getMqtt().getUrls().get(0) + ":1883");
             Log.i(TAG, "JSON mqtt url:" + siotUrl.getMqtt().getUrls().get(0));
-            Toast.makeText(ctx.getApplicationContext(), "Connecting to siot.net...", Toast.LENGTH_SHORT).show();
+            //Toast.makeText(ctx.getApplicationContext(), "Connecting to siot.net...", Toast.LENGTH_SHORT).show();
             return connectBroker(sLicense, sMqttBrokerUrl);
 
-        } else if (mqttClient.isConnected()) {
-            Log.i(TAG, "Already connected to the MQTT broker");
-            Toast.makeText(ctx.getApplicationContext(), "Already connected to the MQTT broker", Toast.LENGTH_SHORT).show();
-            return true;
-
-        } else {
+        } else if (sLicense == null || sLicense.equals("")) {
             Log.i(TAG, "license number is empty");
             Toast.makeText(ctx.getApplicationContext(), "siot.net license number is empty", Toast.LENGTH_SHORT).show();
             return false;
+        } else if (mqttClient != null || mqttClient.isConnected()) {
+            Log.i(TAG, "Already connected to the MQTT broker");
+            Toast.makeText(ctx.getApplicationContext(), "Already connected to the MQTT broker", Toast.LENGTH_SHORT).show();
+            return true;
         }
+        return false;
     }
 
     /**
@@ -84,9 +95,9 @@ public class SiotNetGatewayManagerMobile {
      */
     private boolean connectBroker(String sCenterGUID, String sBrokerURL) {
         if (mqttClient == null);
-            mqttClient = new MQTTClient(ctx, sCenterGUID, sBrokerURL);
+            mqttClient = MQTTClient.getInstance();
 
-        mqttClient.connectBroker();
+        mqttClient.connectBroker(sCenterGUID, sBrokerURL);
         int i = 0;
         while (!mqttClient.isConnected() || i<100) {
             try {
@@ -101,17 +112,26 @@ public class SiotNetGatewayManagerMobile {
             sensorService = new SensorServiceMobile(ctx, sCenterGUID, mqttClient);
 
         } else {
-            Log.i(TAG, "Connection to MQTT Broker "+sBrokerURL+" could not be established");
+            Log.i(TAG, "Connection to MQTT Broker " + sBrokerURL + " could not be established");
         }
         return mqttClient.isConnected();
     }
 
+    /**
+     * Sends a message to mqttclient publishing it to siot.net
+     * @param topic topicname in which the message should be published
+     * @param data payload
+     */
     public void publishData(String topic, String data){
         if(mqttClient.isConnected()){
             mqttClient.publishData(topic, data);
         }
     }
 
+    /**
+     * Sends a message to mqttclient subscribing to a topic on siot.net
+     * @param topic topicname to subscribe
+     */
     public void subscribeData(String topic) {
         if(mqttClient.isConnected()){
             mqttClient.subscribeData(topic);
@@ -136,6 +156,21 @@ public class SiotNetGatewayManagerMobile {
         return sURLServiceLocation;
     }
 
+    /**
+     * Getter of the siot.net center GUID same as license
+     * @return license / center GUID
+     */
+    public String getLicense() {
+        return this.sLicense;
+    }
+
+    /**
+     * Setter fo the siot.net center GUID same as license
+     * @param sLicense license / center GUID
+     */
+    public void setLicense(String sLicense) {
+        this.sLicense = sLicense;
+    }
     /**
      * Setter of the siot.net MQTT broker URL
      * @param sMqttBrokerUrl MQTT broker URL
