@@ -158,7 +158,10 @@ public class PhoneSensorPublisherActivity extends AppCompatActivity implements G
                                 textViewConnectionInfo.setText(Html.fromHtml("Device connected via MQTT<br>Broker URL:<br> " + sngwmgr.getMqttBrokerUrl() + "<br>Topic DAT:<br> " + TopicUtil.PREFIX_DAT + "/" + sLicense + "/#"));
                                 enableSensorSwitches();
                                 linearLayoutSensorSwitches.setVisibility(linearLayoutSensorSwitches.VISIBLE);
-
+                                if (sGAnodeId != null && !sGAnodeId.equals("")) {
+                                    Wearable.MessageApi.sendMessage(googleApiClient, sGAnodeId, MSG_PATH_CONNECT, sLicense.getBytes());
+                                }
+                                Toast.makeText(getApplicationContext(), "Android Wear device connected.", Toast.LENGTH_SHORT).show();
                                 // save siot.net license to the preferences file
                                 SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
                                 SharedPreferences.Editor editor = settings.edit();
@@ -804,10 +807,9 @@ public class PhoneSensorPublisherActivity extends AppCompatActivity implements G
                 if(!isConnected)
                     buttonConnectBroker.performClick();
 
-                Log.i(TAG, "Source NodeId: "+intent.getStringExtra("nodeId"));
+                Log.i(TAG, "Source NodeId: " + intent.getStringExtra("nodeId"));
                 sGAnodeId = intent.getStringExtra("nodeId");
-                Wearable.MessageApi.sendMessage(googleApiClient, sGAnodeId, MSG_PATH_CONNECT, sLicense.getBytes());
-                Toast.makeText(getApplicationContext(), "Android Wear device connected.", Toast.LENGTH_SHORT).show();
+
 
             } else if (path.equals(MSG_PATH_DISCONNECT)) {
                 Toast.makeText(getApplicationContext(), "Android Wear device disconnected.", Toast.LENGTH_SHORT).show();
