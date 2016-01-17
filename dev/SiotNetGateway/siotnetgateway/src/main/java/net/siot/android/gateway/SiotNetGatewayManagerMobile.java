@@ -12,9 +12,9 @@ import net.siot.android.gateway.messagetypes.SiotUrl;
 import net.siot.android.gateway.service.SensorServiceMobile;
 
 /**
- * Created by <a href="mailto:sathesh.paramasamy@students.bfh.ch">Sathesh Paramasamy</a> on 28.10.15.
- *
  * siot.net gateway library SiotNetGatewayManagerMobile. Use to connect the mobile device and a wearable to the siot.net and using the sensorservice correctly configured.
+ *
+ * Created by <a href="mailto:sathesh.paramasamy@students.bfh.ch">Sathesh Paramasamy</a> on 28.10.15.
  */
 public class SiotNetGatewayManagerMobile {
     // TAG for the android logger

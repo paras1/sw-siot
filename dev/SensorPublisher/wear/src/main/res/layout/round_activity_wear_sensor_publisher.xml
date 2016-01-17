@@ -241,7 +241,7 @@
                 android:layout_alignParentRight="true"
                 android:layout_alignParentTop="true"
                 android:layout_marginTop="5dp"
-                android:layout_marginBottom="10dp"
+                android:layout_marginBottom="25dp"
                 android:text="All Sensors" />
         </LinearLayout>
 

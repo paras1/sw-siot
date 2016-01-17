@@ -1,8 +1,8 @@
 package net.siot.android.gateway.messagetypes;
 
 /**
- * Created by Sathesh on 21.12.15.
  * Data object class WearableData. Representation of a JSON format.
+ * Created by Sathesh on 21.12.15.
  */
 public class WearableData {
 

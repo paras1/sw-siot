@@ -8,9 +8,8 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import net.siot.android.gateway.service.SensorServiceWear;
 
 /**
- * Created by <a href="mailto:sathesh.paramasamy@students.bfh.ch">Sathesh Paramasamy</a> on 28.11.15.
- *
  * siot.net gateway library SiotNetGatewayManagerWear. Use to connect the android wear device through the mobile to the siot.net and using the sensorservice correctly configured.
+ * Created by <a href="mailto:sathesh.paramasamy@students.bfh.ch">Sathesh Paramasamy</a> on 28.11.15.
  */
 public class SiotNetGatewayManagerWear {
     private static final String TAG = "siotgw/SNGWManager";

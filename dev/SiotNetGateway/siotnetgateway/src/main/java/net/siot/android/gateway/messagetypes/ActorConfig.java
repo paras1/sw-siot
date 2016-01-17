@@ -1,8 +1,8 @@
 package net.siot.android.gateway.messagetypes;
 
 /**
- * Created by Sathesh on 13.11.15.
  * Data object class ActorConfig class. Representation of a JSON format.
+ * Created by Sathesh on 13.11.15.
  */
 public class ActorConfig {
     private String sensor;

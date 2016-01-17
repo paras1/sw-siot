@@ -3,8 +3,8 @@ package net.siot.android.gateway.util;
 import android.hardware.Sensor;
 
 /**
- * Created by Sathesh on 04.10.15.
  * Sensor type mapping to constants (helper class)
+ * Created by Sathesh on 04.10.15.
  */
 public class SensorTypeKeys {
     public final static int SENS_ACCELEROMETER = Sensor.TYPE_ACCELEROMETER;

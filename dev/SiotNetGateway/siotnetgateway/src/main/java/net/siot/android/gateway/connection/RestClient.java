@@ -10,8 +10,8 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 /**
- * Created by Sathesh on 30.10.15.
  * REST API client. Used to get the URLs from the siot.net URL service.
+ * Created by Sathesh on 30.10.15.
  */
 public class RestClient {
 

@@ -1,8 +1,8 @@
 package net.siot.android.gateway.messagetypes;
 
 /**
- * Created by Sathesh on 30.10.15.
  * Data object class SiotUrl. Representation of a JSON format.
+ * Created by Sathesh on 30.10.15.
  */
 public class SiotUrl {
 

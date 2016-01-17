@@ -28,8 +28,8 @@ import java.util.concurrent.Executors;
 
 
 /**
- * Created by Sathesh Paramasamy on 28.11.15.
  * Pre-configured SensorService for android wear devices which will be connected to siot.net.
+ * Created by Sathesh Paramasamy on 28.11.15.
  */
 public class SensorServiceWear extends Service implements SensorEventListener {
     private final static String TAG = "SensorPub/SenServWear";

@@ -26,8 +26,8 @@ import java.util.concurrent.Executors;
 
 
 /**
- * Created by Sathesh Paramasamy on 12.10.15.
  * Pre-configured SensorService for mobile devices which will be connected to siot.net.
+ * Created by Sathesh Paramasamy on 12.10.15.
  */
 public class SensorServiceMobile extends Service implements SensorEventListener {
     private static final String TAG = "SensorPub/SenServMobile";
@@ -794,6 +794,8 @@ public class SensorServiceMobile extends Service implements SensorEventListener 
         }
         dataGUIDmap.put(sensorValueName, GUID);
         sensorMap.put(sensorType, dataGUIDmap);
+
+        //save sensors
     }
 
     /**
@@ -895,4 +897,12 @@ public class SensorServiceMobile extends Service implements SensorEventListener 
             Log.w(TAG, "No "+sensor.getName()+" found");
         }
     }
+
+/* Next steps: saving sensor GUIDs
+    private void saveSensors() {
+        SharedPreferences settings = getSharedPreferences("siotSensorGUID", 0);
+        SharedPreferences.Editor editor = settings.edit();
+        editor.putString("sensorGUIDJSON", sLicense);
+        editor.commit();
+    }*/
 }

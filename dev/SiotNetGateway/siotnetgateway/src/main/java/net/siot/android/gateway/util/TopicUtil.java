@@ -3,6 +3,7 @@ package net.siot.android.gateway.util;
 import android.util.Log;
 
 /**
+ * This is a helper class to generate the correct MQTT topics to publish.
  * Created by Sathesh on 13.11.15.
  */
 public class TopicUtil {
@@ -37,13 +38,13 @@ public class TopicUtil {
         String topic = "";
         switch (topicType) {
             case 0:
-                topic = PREFIX_MNF+"/"+GUID_cen+"/"+GUID+"/";
+                topic = PREFIX_MNF+"/"+GUID_cen+"/"+GUID;
                 break;
             case 1:
-                topic = PREFIX_CNF+"/"+GUID_cen+"/"+GUID+"/";
+                topic = PREFIX_CNF+"/"+GUID_cen+"/"+GUID;
                 break;
             case 2:
-                topic = PREFIX_DAT+"/"+GUID_cen+"/"+GUID+"/";
+                topic = PREFIX_DAT+"/"+GUID_cen+"/"+GUID;
                 break;
             case 3:
                 topic = PREFIX_DAT+"/"+GUID+"/";

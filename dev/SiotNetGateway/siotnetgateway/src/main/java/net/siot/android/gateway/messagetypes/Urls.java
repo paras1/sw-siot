@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by Sathesh on 30.10.15.
  * Data object class Urls. Representation of a JSON format.
+ * Created by Sathesh on 30.10.15.
  */
 public class Urls {
 
