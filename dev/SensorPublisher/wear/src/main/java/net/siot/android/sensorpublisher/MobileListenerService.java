@@ -6,8 +6,8 @@ import android.support.v4.content.LocalBroadcastManager;
 import com.google.android.gms.wearable.MessageEvent;
 
 /**
- * Created by Sathesh on 15.12.15.
  * Message listener. Processes messages received from the companion android mobile device.
+ * Created by Sathesh Paramasamy on 15.12.15.
  */
 public class MobileListenerService extends com.google.android.gms.wearable.WearableListenerService {
 

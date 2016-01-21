@@ -32,8 +32,9 @@ import net.siot.android.gateway.messagetypes.WearableData;
 import net.siot.android.gateway.util.TopicUtil;
 
 /**
+ * siot.net Sensorcenter App for android mobile devices.
+ * This application can be used to manifest sensor of your device and send messurements.
  * Created by Sathesh Paramasamy on 20.11.15.
- * SensorPublisher App for android mobile devices
  */
 public class PhoneSensorPublisherActivity extends AppCompatActivity implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener{
 
@@ -560,7 +561,7 @@ public class PhoneSensorPublisherActivity extends AppCompatActivity implements G
             magneticFieldUncalSwitch.setVisibility(magneticFieldUncalSwitch.GONE);
         }
 
-        gameRotationVectorSwitch = (Switch) findViewById(R.id.gameRotationVectorSwitch);
+        /*gameRotationVectorSwitch = (Switch) findViewById(R.id.gameRotationVectorSwitch);
         if (sngwmgr.getSensorService().gameRotationVectorSensor != null) {
             gameRotationVectorSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
 
@@ -579,8 +580,8 @@ public class PhoneSensorPublisherActivity extends AppCompatActivity implements G
             });
         } else {
             gameRotationVectorSwitch.setClickable(false);
-            accelerometerSwitch.setVisibility(gameRotationVectorSwitch.GONE);
-        }
+            gameRotationVectorSwitch.setVisibility(gameRotationVectorSwitch.GONE);
+        }*/
 
         gyroscopeUncalSwitch = (Switch) findViewById(R.id.gyroscopeUncalSwitch);
         if (sngwmgr.getSensorService().gyroscopeUncalibratedSensor != null) {
@@ -785,9 +786,9 @@ public class PhoneSensorPublisherActivity extends AppCompatActivity implements G
     public class MessageReceiver extends BroadcastReceiver {
 
         /**
-         * Action which will be done when a message is received.</br>
-         * Paths:</br>
-         *     sendMessage : triggers the action to publish a message to the MQTT broker with the given topic and JSON formatted string</br>
+         * Action which will be done when a message is received.<br>
+         * Paths:<br>
+         *     sendMessage : triggers the action to publish a message to the MQTT broker with the given topic and JSON formatted string<br>
          *     connectToSiot : triggers an action which connects the mobile device to the siot.net MQTT broker and sends the license code as a message to the wearable
          * @param context activity context
          * @param intent received message intent

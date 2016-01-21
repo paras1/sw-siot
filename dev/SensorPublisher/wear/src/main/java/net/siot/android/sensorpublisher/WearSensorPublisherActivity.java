@@ -30,8 +30,9 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 /**
+ * siot.net Sensorcenter App for android wear devices.
+ * This application can be used to manifest sensor of your device and send messurements to siot.net.
  * Created by Sathesh Paramasamy on 15.12.15.
- * SensorPublisher App for android wear devices
  */
 public class WearSensorPublisherActivity extends WearableActivity implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
 
@@ -719,9 +720,9 @@ public class WearSensorPublisherActivity extends WearableActivity implements Goo
     public class MessageReceiver extends BroadcastReceiver {
 
         /**
-         * Action which will be done when a message is received.</br>
-         * Paths:</br>
-         *     sendMessage : triggers the action to generate a toast which says that data is sent from wearable device</br>
+         * Action which will be done when a message is received.<br>
+         * Paths:<br>
+         *     sendMessage : triggers the action to generate a toast which says that data is sent from wearable device<br>
          *     connectToSiot : triggers an action which connects the android wear device to the mobile. That is connected to siot.net MQTT broker.
          *     disconnectFromSiot: trigger an action which disables all sensor on the wearable. Shows the login screen.
          * @param context activity context
