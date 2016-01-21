@@ -1,0 +1,82 @@
+\chapter{Entwicklerhandbuch}
+Diese Entwicklerhandbuch zeigt die ersten Schritte wie die siot.net Gateway Library in die App einzubinden sind.
+\section{Download}
+Die Android und Android Wear Library im Prototyp-Release, kann unter folgender URL geladen werden:\\
+\url{https://github.com/paras1/sw-siot/blob/master/dev/SiotNetGateway/library/}\\
+Der offizielle Release wird in der jCentral Ablage verfügbar sein. Somit kann sie in der \textit{build.gradle} Datei, des jeweiligen Modules (Mobile und/oder Wear) eingefügt werden.
+\section{Dokumentation}
+Die Referenzdokumentation (JavaDoc) kann unter folgender URL heruntergeladen werden:\\ \url{https://github.com/paras1/sw-siot/tree/master/doc/02_javadoc/01_SiotNetGateway}
+\section{Erste Schritte}
+Die siot.net Gateway Library funktioniert ab der SDK Version 21. Das heisst, sie ist ab Android 5.0 Lollipop kompatibel.\\
+Für die Integration der siot.net Gateway Library muss die siotnetgateway.vX\_X.aar Datei im \textit{build.gradle} referenziert werden. Zusätzlich benötigt, diese noch weitere Bibliotheken. Beim Beispiel ist die Library im \textbf{libs} Verzeichnis des Projektordner abgelegt. Die zusätzlich, in den \textit{dependencies}, angegebenen Bibliotheken werden zwingend benutzt für das Paket.\\
+Ein Beispiel:
+\begin{lstlisting}
+//build.gradle (project)
+buildscript {
+  repositories {
+      jcenter()
+  }
+  dependencies {
+      classpath 'com.android.tools.build:gradle:x.x.x'
+      classpath 'com.google.gms:google-services:x.x.x'
+  }
+}
+allprojects {
+  repositories {
+      jcenter()
+      maven {
+          url 'https://repo.eclipse.org/content/repositories/paho-releases/'
+      }
+      flatDir {
+          dirs 'libs'
+      }
+  }
+}
+--------------------------------------------------------------------------------
+//build.gradle (mobile)
+dependencies {
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+    wearApp project(':wear')
+
+    compile 'com.android.support:appcompat-v7:21.x.x'
+    compile 'com.google.android.gms:play-services:7.3.0'
+    compile 'org.eclipse.paho:org.eclipse.paho.client.mqttv3:1.0.2'
+    compile 'com.google.code.gson:gson:2.4'
+    compile(name:'siotnetgateway_vX_X', ext:'aar')
+}
+--------------------------------------------------------------------------------
+//build.gradle (wear)
+dependencies {
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+    compile 'com.google.android.support:wearable:x.x.x'
+    compile 'com.android.support:appcompat-v7:21.x.x'
+    compile 'com.google.android.gms:play-services:7.3.0'
+    compile 'com.google.android.gms:play-services-wearable:7.3.0'
+    compile 'org.eclipse.paho:org.eclipse.paho.client.mqttv3:1.0.2'
+    compile 'com.google.code.gson:gson:2.4'
+    compile(name:'siotnetgateway_vX_X', ext:'aar')
+}
+\end{lstlisting}
+\section{Entwicklung}
+Um die Elemente in der Bibliothek zu nutzen, muss ein \textit{SiotNetGatewayManagerMobile(Context)} für Android Geräte oder ein \textit{SiotNetGatewayManagerWear(Context, GoogleClientApi, String)} für Wearables instanziert werden. Der Parameter \textit{Context}, ist der Kontext der Activity, welcher mitgegeben werden muss. \textit{GoogleClientApi} und \textit{String} (NodeId des GoogleClients) müssen nur bei der Wear Instanz mitgegeben werden. Diese sind notwendig für die Kommunikation zwischen Mobile und Wear Geräte.
+\begin{lstlisting}
+//MobileActivity.java
+...
+SiotNetGatewayManagerMobile mobile = new SiotNetGatewayManagerWear(this);
+...
+--------------------------------------------------------------------------------
+//WearActivity.java
+...
+SiotNetGatewayManagerWear wear =
+    new SiotNetGatewayManagerWear(this, googleApiClient, nodeId);
+...
+\end{lstlisting}
+Der Verbindungsaufbau gelingt mit der persönlichen siot.net Lizenz. Für die Smartwatch ist dies nicht nötig, da diese eine offene Verbindung von Mobile Gerät voraussetzt.
+\begin{lstlisting}
+//MobileActivity.java
+...
+mobile.connectToSiotNet(license);
+...
+\end{lstlisting}
+Mit diesen Schritten kann, die Bibliothek erfolgreich in die App eingebunden werden.\\
+Für weitere Informationen, verwenden Sie bitte die Referenzdokumentation.

@@ -83,6 +83,7 @@
 \definecolor{darkblue}{rgb}{0,0.08,0.45}			% Dark blue
 \definecolor{brickred}{cmyk}{0,0.89,0.94,0.28}	% Brickred
 \definecolor{bfhred}{rgb}{0.776,0,0.066}			% Red
+\definecolor{bfhgrey}{rgb}{0.41,0.49,0.57}
 % specific colors
 \definecolor{titlecolor}{rgb}{0,0.08,0.45}		% Color used for the title
 %\definecolor{linkcolor}{rgb}{0,0,0.8}			% Blue for the web- and cd-version!
@@ -113,12 +114,12 @@
 \usepackage{geometry}
 \geometry{
 	a4paper,
-	left=20mm,
+	left=28mm,
 	right=15mm,
 	top=30mm,
 	headheight=20mm,
 	headsep=10mm,
-	textheight=232mm,
+	textheight=242mm,
 	footskip=15mm
 }
 %---------------------------------------------------------------------------
@@ -143,6 +144,8 @@
 %---------------------------------------------------------------------------
 \usepackage[nonumberlist]{glossaries}
 \makeglossaries
+\include{99_Anhang/99_glossar}
+
 %---------------------------------------------------------------------------
 
 % Listings Package
@@ -219,9 +222,9 @@
 	\fancyhead[C]{}						% header right part --> module name
 	\fancyhead[R]{\footnotesize \leftmark}		% footer left part -->	chapter
 	\fancyhead[L]{								% header left part --> BFH logo
-		\begin{textblock}{0}[0,0](20,9)
-			\includegraphics[scale=0.9]{98_Bilder/99_BFH_Logo/\logo}
-		\end{textblock}
+		%\begin{textblock}{0}[0,0](20,9)
+		%	\includegraphics[scale=0.9]{98_Bilder/99_BFH_Logo/\logo}
+		%\end{textblock}
 	}
 }
 
@@ -248,69 +251,88 @@
 %---------------------------------------------------------------------------
 
 \pagenumbering{arabic}
-\settocdepth{subsubsection}		% Set depth of toc
+\settocdepth{subsection}		% Set depth of toc
 \setcounter{secnumdepth}{3}
-
 % Main part - Part I
 %---------------------------------------------------------------------------
 \onecolumn
 \include{01_Einleitung/01_Einleitung}
-
 % Main part - Part II
 %---------------------------------------------------------------------------
 \onecolumn
 \include{02_Grundlagen/01_Grundlagen}
-
 % Main part - Part III
 %---------------------------------------------------------------------------
 \onecolumn
 \include{03_Analyse_Marktsegment_SW_IoT/01_Marktsegmente}
-
 % Main part - Part IV
 %---------------------------------------------------------------------------
 \onecolumn
 \include{04_Analyse_Anwendungen_SW_IoT/01_Anwendungen}
-
 % Main part - Part V
 %---------------------------------------------------------------------------
 \onecolumn
 \include{05_Technische_Anforderungen/01_Technische_Anforderung_an_SW}
-
 % Main part - Part VI
 %---------------------------------------------------------------------------
 \onecolumn
 \include{06_Evaluation_SW_Produkte/01_Evaluation_SW_Produkte}
-
 % Main part - Part VII
 %---------------------------------------------------------------------------
 \onecolumn
 \include{07_Architektur/01_Architektur}
-
 % Main part - Part VIII
 %---------------------------------------------------------------------------
 \onecolumn
 \include{08_Requirements/01_Anforderungsdokumente}
-
-% Main part - Part VIII
+% Main part - Part IX
 %---------------------------------------------------------------------------
 \onecolumn
-\include{09_Softwaredesign/01_Softwaredesign}
-
+\include{09_Konzept/01_Konzept}
+% Main part - Part X
+%---------------------------------------------------------------------------
+\onecolumn
+\include{10_Implementation/01_Implementation}
+% Main part - Part XI
+%---------------------------------------------------------------------------
+\include{11_Ergebnis/01_Ergebnis}
+% Main part - Part XII
+%---------------------------------------------------------------------------
+\onecolumn
+\include{12_Schlusswort/01_Schlusswort}
 % Appendix
 %---------------------------------------------------------------------------
-\cleardoublepage
-\appendix
 
-\renewcommand\listfigurename{A. Abbildungsverzeichnis}
+% Glossary
+%---------------------------------------------------------------------------
+\cleardoublepage
+\addcontentsline{toc}{chapter}{Glossar}
+\renewcommand{\glossaryname}{Glossar}
+\printglossary
+%---------------------------------------------------------------------------
+
+% Bibliography
+%---------------------------------------------------------------------------
+\cleardoublepage
+\phantomsection
+\addcontentsline{toc}{chapter}{Literaturverzeichnis}
+\bibliographystyle{IEEEtranS}
+\bibliography{99_Anhang/98_bibliography}{}
+%---------------------------------------------------------------------------
+
+\cleardoublepage
+\renewcommand\listfigurename{Abbildungsverzeichnis}
 \addcontentsline{toc}{chapter}{\texorpdfstring{\listfigurename}{Abbildungsverzeichnis}}
 \listoffigures
-
-\renewcommand\listtablename{B. Tabellenverzeichnis}
+\renewcommand\listtablename{Tabellenverzeichnis}
 \addcontentsline{toc}{chapter}{\texorpdfstring{\listtablename}{Tabellenverzeichnis}}
 \listoftables
-\setcounter{chapter}{1}
-
-
+\appendix
+\settocdepth{section}
+\onecolumn
+\include{99_Anhang/01_Entwicklerhandbuch}
+\onecolumn
+\include{99_Anhang/02_Zeitplan}
 %---------------------------------------------------------------------------
 
 % Index

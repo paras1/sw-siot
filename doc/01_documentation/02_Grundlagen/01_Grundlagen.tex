@@ -1,55 +1,38 @@
 \chapter{Grundlagen}
 \section{Internet of Things (IoT)}
-Das Internet der Dinge (Internet of Things / IoT) ist eine Struktur, bei der Tiere, Menschen oder Objekte mit einer unverwechselbaren  Identität bezeichnet sind. Weiterhin ist damit die Möglichkeit verbunden, Daten über ein Netzwerk ohne Interaktionen Mensch-zu-Mensch oder Mensch-zu-Computer zu übertragen. Das Internet der Dinge hat sich aus der Konvergenz der drahtlosen (wireless) Technologie, MEMS (Micro-Electromechanical Systems) und dem Internet entwickelt.
+Das Internet of Things ist eine Struktur, welche alle Objekte mit einer eindeutigen Identität gekennzeichnet sind. Dadurch ist die Möglichkeit gegeben, wenn die Dinge verbunden sind, dass Informationen über ein Netzwerk übermittelt werden können. Dies kann ohne Interaktion von Mensch-zu-Mensch oder Mensch-zu-Computer durchgeführt werden. Das \gls{IoT} hat sich aus dem Zusammenspiel von der drahtlosen Kommunikation, dem Internet und mit den \gls{MEMS} (Micro-Electromechanical Systems) entwickelt.
 
-Ein Ding im Internet der Dinge kann zum Beispiel eine Person mit einem Herzschrittmacher, ein Nutztier auf einem Bauernhof mit einem Biochip-Transponder oder ein Automobil mit eingebauten Sensoren sein. Letzteres könnte eine Warnung auslösen, wenn der Reifendruck zu niedrig ist. Im Prinzip ist jedes vom Menschen geschaffene Objekt ein Kandidat, das sich mit einer IP-Adresse ausstatten lässt und Daten via Netzwerk übertragen kann. Bisher wurde das Internet der Dinge am häufigsten mit M2M-Kommunikation (Maschine-zu-Maschine) bei der Fertigung, sowie der Strom-, Gas- und Öl-Versorgung in Verbindung gebracht. Sind Produkte mit M2M-Kommunikation ausgestattet, werden sie häufig als intelligent oder smart bezeichnet.\footnote{\url{http://www.searchnetworking.de/definition/Internet-der-Dinge-Internet-of-Things-IoT}, 23.10.2015}
-\begin{figure}[h]
-  \centering
-  \includegraphics[scale=0.5]{98_Bilder/02_Grundlagen/iot}
-  \caption[Symbolbild Internet of Things]{Internet of Things: Vernetzte Geräte bilden ein Internet der Dinge}
-  \footnotesize \url{http://kpcbweb2.s3.amazonaws.com/content/710/original_aefd15169aaebd3f037b5ed672db6de1.png}, 20.11.2015
-\end{figure}
+Ein "`Thing"' im \gls{IoT} kann zum Beispiel eine Boje mit eingebauten Sensoren, ein selbstfahrendes Fahrzeug, ein Mensch mit einem Herzschrittmacher oder auch ein Haustier mit einem Biochip sein. Jedes dieser Objekte kann nützliche Informationen preisgeben. Man kann durchaus sagen, dass jedes vom Menschen geschaffene Objekt ein Kandidat dazu ist. Die Voraussetzung ist, dass es sich mit einer Netzwerkadresse beschreiben lässt und es Daten mittels eines Netzwerks übertragen kann. Die Dinge im \gls{IoT} zeichnen sich durch die Fähigkeit der Maschine-zu-Maschine Kommunikation aus. Deshalb werden diese Objekte oft auch als intelligent oder smart betitelt (vgl. \cite{mr:iotdef}).
+
+Seit Jahren wird Forschung auf diesem Gebiet getrieben, um die Informationslücke zwischen der realen und der virtuellen Welt zu vermindern. Laut dem Forbes Magazin wird es bis Ende Jahrzehnt (2020) bereits 30 Milliarden vernetzte Dinge geben (vgl. \cite{mr:iotdef}). Cisco spricht von 50 Milliarden "`Things"' im Jahre 2025 (vgl. \cite{mk:iot}).
 
 \section{Smartwatches}
-Smartwatches sind kompakte Computersysteme, welche vom Benutzers am Handgelenk getragen werden kann. Diese sind meist mit einer oder mehreren drahtlos Technologie und verschiedenen Sensoren (Bewegungssensor, Lichtsensor, Herzfrequenzmesser) Aktoren (Bildschrim, Vibrationsmotor) ausgerüstet.
-Diese Uhren unterstützen den Träger beim alltäglichen Leben. Gehören zur Gruppe der Wearables und damit zu einem essentiellen Bereich des IoT. \\\\
-\begin{figure}[h]
-  \centering
-  \includegraphics[scale=0.6]{98_Bilder/02_Grundlagen/androidwearapplewatch}
-  \caption[Google's Android Wear und Apple Watch]{Motorola Moto360 mit Google's Android und Apple Watch mit iOS}
-  \footnotesize \url{http://v-i-t-t-i.de/blog/wp-content/uploads/2014/09/android-wear-apple-watch.jpg}, 20.11.2015
-\end{figure}
-
-
-Mit einer Smartwatch können viele verschiedene Funktionalitäten mit einem Gerät abgedeckt werden.
-\subsection{Beispiele}
-\begin{tabular}{ll}
-Pulsmessung: &	Überwachung des persönlichen Pulses \\
-Bewegungen:	& Mögliche Bewegungen welche über das Handgelenk ermittelt werden können analysieren \\
-Fitness: & Genaue Bewegungen können registriert und in kombination von Weg und ausgewertet werden \\
-Informationen: & Der Träger kann Informationen empfangen welche auf seinem Smartphone ersichtlich sind
-\end{tabular}
-
-\subsection{Fachbereich Informatik}
-Smartwatches gehören in den Bereich der Wearables. Dies ist ein fachübergreifendes Gebiet der Informatik, einige Fachgebiete:\\
-- Ubiquitous Computing, die Rechnerallgegenwärtig \\
-- Pervasive Computing, die Vernetzung von Alltagsgegenständen \\
-- Mobile Computing, mobile Mensch zu Maschinen Kommunikation \\
-- M2M, Machine-to-Machine, Informationsaustausch zwischen Zielgeräten \\
-- IoT, Internet of Things, dass auf den vorhergehenden Fachbereichen basiert
+Smartwatches sind kompakte Computersysteme, welche vom Benutzer am Handgelenk getragen werden kann. Diese können viele verschiedene Funktionalitäten mit einem Gerät abdecken. Die Minicomputer sind meist mit einer oder mehreren drahtlos Technologie und verschiedenen Sensoren (Bewegungssensor, Lichtsensor, Herzfrequenzmesser) Aktoren (Bildschirm, Vibrationsmotor) ausgerüstet.\\
+Diese Uhren unterstützen den Träger beim alltäglichen Leben. Sie gehören zur Gruppe der Wearables und damit zu einem essentiellen Bereich des \gls{IoT}. Die zurzeit grössten Player auf dem Markt sind Apple, mit der Apple Watch, und Google, mit den Android Wear Geräte verschiedener Hersteller.
 
 \section{MQTT}
+\gls{MQTT} wurde im Jahre 1999 von Andy Stanford-Clark (IBM) und Arlen Nipper (damals Eurotech) entwickelt um eine Ölpipeline quer durch die Wüste zu überwachen. Das Ziel war ein Protokoll zu erhalten, welches Bandbreiteneffizient ist und wenig Energie konsumiert. Dies musste erreicht werden, weil die eingesetzten Geräte über Satelliten verbunden waren. Zu dieser Zeit war dies sehr teuer.\\
+Das Protokol benutzt die publish/subscribe Architektur, im Gegensatz beansprucht HTTP request/response. Publish/subscribe ist ereignisgesteuert und erlaubt, Nachrichten an den Empfänger zu pushen. Der zentrale Kommunikationspunkt ist der \gls{MQTT} Vermittler, auch \gls{MQTT} Broker genannt. Dieser hat die Verantwortung, die Mitteilung zwischen den Sendern und den richtigen Empfängern zu verteilen. Das Routing geschieht anhand von sogenannten Themen (Topics). Topics sind vergleichbar mit Ordnerstrukturen. Sie beginnen mit einem Thema und werden anhand von Slashes unterteilt in Unterthemen. Jede Nachricht beinhaltet ein Topic. Dieser dient für den Broker als Verteilschlüssel. Jeder Empfänger abonniert die gewünschten Topics und der Broker stellt ihnen die Meldungen mit dem passenden Wert zu. Das hat den Vorteil, dass Sender und Empfänger gegenseitig nicht bekannt sein müssen. Diese Architektur erlaubt eine in hohen Masse skalierbare Lösung ohne Abhängigkeiten zwischen Datenproduzent und Konsument.\\
+\begin{figure}[H]
+  \centering
+  \includegraphics[scale=0.3]{98_Bilder/02_Grundlagen/MQTT}
+  \caption[\gls{MQTT} Architektur]{Die Publish/Subscribe Architektur von \gls{MQTT}}
+\end{figure}
+Der Unterschied zum HTTP Protokoll ist, das ein dienstanforderndes Gerät die Informationen nicht holen muss, sondern direkt geliefert bekommt. Voraussetzung dafür ist eine immer offene TCP Verbindung vom Client zum Server. Falls diese Konnexion unterbrochen werden sollte, kann der \gls{MQTT} Broker Nachrichten zwischenlagern und dann pushen, wenn dieser wieder Verfügbar ist (vgl. \cite{hive:mqtt}).
+
+\section{Node-RED}
+Node-RED ist ein Open Source Tool der Firma IBM. um "`Things"', \gls{API}s und Online Services miteinander zu verbinden. Es ist ein browserbasierender Flusseditor. Es basiert auf Node.js und ist eine effiziente Applikation, um Verbindungen im \gls{IoT} zu erstellen. Es bietet auch die Möglichkeit Aktionen auszuführen, Scripts zu definieren und auch andere Online Services zu koppeln (vgl. \cite{nh:nRed}).
+
+\section{Android und Android Wear}
+Google's Android ist das marktführende Betriebssystem (vgl. \cite{stat:spos}), welches in aller Munde ist. Es betreibt Smartphones und Tablets unterschiedlicher Hersteller und ist ein Open-Source Produkt. Android Wear ist das OS von Google für Wearables, wie Smartwatches. Es basiert auf Android, ist optimiert für kleine Geräte mit weniger Leistung und kurzer Akkuausdauer.
 
 \section{siot.net}
-
-Die Fachgruppe SIOT des Instituts RISIS der BFH konzipiert und entwickelt zusammen mit Industriepartner (AppModule AG) die Plattform siot.net, welche Sensoren und Aktoren weltweit mit IoT-Anwendungen verbindet.
-Das Ziel dieser Plattform ist es sie zu industrialisieren um Klein und Mittlere Unternehmen (KMU) eine Möglichkeit zu geben ihre Sensoren und Geräte zu vernetzen. Dies soll vorteilhafterweise zu einem günstigen Preis möglich sein.
-siot.net bietet für eine kleine Gebühr ein IoT-Center und die IoT Infrastruktur.
-Konfiguration, Analyse, Verwaltung und Zuweisungen werlden alle im IoT-Center durchgeführt. Über das IoT-Center können alle Sensoren und Aktoren verknüpft und konfiguriert werden. Um die Daten auszuwerten und darzustellen wird ein Dashboard zur Verfügung gestellt. Die IoT-Infrastruktur beinhaltet einen MQTT Broker und die Definition, wie Meldungen auf den siot.net Broker angeliefert werden sollen.\\\\
+Die Plattform siot.net ist entstanden, um das Bedürfnis von Nutzern zu stillen, welche Geräte und Dingen ans Internet anbinden wollen, die noch nicht vernetzt sind. Im Interesse der Industriepartner, ist das Ziel diese Plattform zu industrialisieren, um Klein- und Mittlere-Unternehmen (KMU) eine Möglichkeit zu geben ihre Sensoren, Geräte, Maschinen und viele weitere Dinge zu vernetzen. Die Plattform soll ermöglichen, dass auch informatikfremde Personen und Firmen das Internet of Things nutzen können.\\
+siot.net bietet ein \gls{IoT}-Center (siehe Abbildung 2.1) mit der \gls{IoT}-Infrastruktur. Konfiguration und Verwaltung werden im \gls{IoT}-Center durchgeführt. Die \gls{IoT}-Infrastruktur beinhaltet einen \gls{MQTT} Broker und das siot-Interface. Das ist die Schnittstellenspezifikation von siot.net. Nicht nach Schema angelieferte Nachrichten kann das \gls{IoT}-Center nicht interpretieren (vgl. \cite{siot:cobo}).\\
 \begin{figure}[h]
   \centering
-  \includegraphics[scale=1.0]{98_Bilder/02_Grundlagen/siotnetLogo}
-  \caption[siot.net Logo]{siot.net Plattform Logo}
-  \footnotesize \url{http://siot.appmodule.rs:8000/images/logo.png}, 20.11.2015
+  \includegraphics[scale=0.35]{98_Bilder/02_Grundlagen/siotcenter}
+  \caption[siot.net IoT-Center]{siot.net \gls{IoT}-Center}
 \end{figure}
-\subsection{IoT-Center}
+\section{siot.io}
+Für die Verwertung der Daten, welche die siot.net-Plattform sendet und empfängt ist das Projekt siot.io entstanden. siot.io soll die Webschnittstelle zur siot.net-Plattform implementieren. Dabei bietet sie einen Sensorsimulator, eine konfigurierbare Dashboard Applikation mit Widgets, sowie eine Node-RED Instanz für eigene Applikationen.

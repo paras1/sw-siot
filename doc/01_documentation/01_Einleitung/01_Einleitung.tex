@@ -1,40 +1,40 @@
 \chapter{Einleitung}
 \section{Ausgangslage}
-Die Fachgruppe SIOT des Instituts RISIS der BFH konzipiert und entwickelt zusammen mit Industriepartner die Plattform siot.net, welche Sensoren und Aktoren weltweit mit IoT-Anwendungen (IoT: Internet of Things) verbindet. Smartwaches, welche eine rasante Marktakzeptanz geniessen, spielen eine grosse Rolle im Bereich IoT, denn sie integrieren eine Anzahl von Sensoren und können am Handgelenk Informationen anzeigen. Allerdings gibt es betreffend Funktionalität eine grosse Spannweite bei den Smartwatches, was deren mögliche Einsatzgebiete schliesslich definiert.
+Die Fachgruppe SIOT des Instituts RISIS der BFH konzipiert und entwickelt zusammen mit Industriepartnern (AppModule und NetModule) die Plattform siot.net, welche Sensoren und Aktoren weltweit mit \gls{IoT}-Anwendungen verbindet. Smartwaches, welche eine rasante Marktakzeptanz geniessen, spielen eine grosse Rolle im Bereich \gls{IoT}, denn sie integrieren eine Anzahl von Sensoren und können am Handgelenk Informationen anzeigen. Betreffend Funktionalität gibt es eine gewisse Spannweite bei den Smartwatches, was deren mögliche Einsatzgebiete schliesslich definiert.
 
 \section{Problemstellung}
-Die Projektarbeit 2 erlaubte Android Smartwatch zu analysieren. Diese Erkenntnisse sollen genutzt werden um in einer praktischen Umsetzung konkretisiert werden.
-- Dabei sollend folgende Themen genauer betrachtet werden: \\
+Die Projektarbeit 2 erlaubte Android Smartwatch zu analysieren. Diese Erkenntnisse sollen genutzt und mit einer praktischen Umsetzung konkretisiert werden.
+Dabei sollen folgende Themen genauer betrachtet werden: \\
 - Welche Anwendungsklassen kann man für Smartwatches erkennen? \\
 - Wie werden Smartwaches am weltweiten Internet angebunden? \\
-- Welche GUI-Elemente werden bereit gestellt? \\
+- Welche GUI-Elemente werden bereitgestellt? \\
 - Welche Sensoren und Aktoren stehen zur Verfügung? \\
 
-Die Bachelorarbeit beinhaltet eine Markt- und Bedürfnisanalyse welche die Marktsegmente und die Bedürfnisse aus Sicht IoT für Smartwatch aufzeigen. Für die identifizerten Anwendungen werden Smartwatches evaluiert.\\
-Als weitere Aufgabe wird eine generische System-Architektur definiert, mit welcher Software für Smartwatches für IoT Anwendungen im siot.net Umfeld realisiert werden kann. \\
-In einem formalen Teil werden die Anforderung bzw. technischen Anforderung, einer bestimmten Smartwatch an eine Anwendung gestellt, untersucht und aufgezeigt. Hierbei sollen auch Genauigkeiten und Zuverlässigkeiten genauer betrachtet werden. \\
-Es wird ein Software Design erstellt mit welchem 2 bis 3 konkrete Anwendungen implementiert werden könnten. \\
-Daraus wird mindestens eine konkrete Anwendung implementiert. Zur Implementation wird eine Dokumentation erstellt welche von Ingenieuren gelesen wird. \\
+Die Bachelorarbeit beinhaltet eine Markt- und Bedürfnisanalyse, welche die Marktsegmente und die Bedürfnisse aus Sicht \gls{IoT} für Smartwatch aufzeigen. Für die identifizierten Anwendungen werden Smartwatches evaluiert.\\
+Als weitere Aufgabe wird eine generische System-Architektur definiert, mit welcher Software für Smartwatches für \gls{IoT}-Anwendungen im siot.net Umfeld realisiert werden kann. \\
+In einem formalen Teil werden die Anforderung bzw. technischen Anforderung, einer bestimmten Smartwatch an eine Anwendung gestellt, untersucht und aufgezeigt. Hierbei sollen auch Genauigkeiten und Zuverlässigkeit betrachtet werden. \\
+Es wird ein Softwaredesign erstellt mit welchem zwei bis drei konkrete Anwendungen implementiert werden könnten. \\
+Daraus wird mindestens eine konkrete Anwendung umgesetzt. Zur Realisierung wird eine Dokumentation erstellt welche von Informatik-Ingenieuren gelesen wird. \\
 Schlussendlich werden in diesem Dokument alle Ergebnisse berichtet.
 
 \section{Zielsetzung}
-Mit einer Bedürfnisanalyse sollen Anwendungsfälle für Smartwatches erarbeitet werden. Mit den entdeckten Use-Cases werden aktuelle Smartwatches evaluiert und mindestens eine wird genauer betrachtet. Um eine geeignete Plattform für die Softwareentwicklung der gewählten Uhr aufzubauen wird eine Entwicklung-, Build und Testumgebung angeschaut und gewählt.
+Mit einer Bedürfnisanalyse sollen Anwendungsfälle für Smartwatches erarbeitet werden. Mit den entdeckten Use-Cases werden aktuelle Smartwatches evaluiert und mindestens eine wird genauer betrachtet. Um eine geeignete Plattform für die Softwareentwicklung der gewählten Uhr aufzubauen, wird eine Entwicklungsumgebung eruiert.
 
-Die erstellten Grundlagen helfen die eine generische Softwarebibliothek zu erstellen. Mit diesem Stück Software wird ermöglicht, Smartwatches und Smartphones schnell an die siot.net Plattform anzubinden. Entwickler von Apps erleichtert dies die Arbeit, denn für die Verbindung an das IoT System kann die Bibliothek verwendet werden. Bei der generischen Anbindung wird das Hauptaugenmerk auf Sensor-, Ortungsdaten und Aktoren aktionen gelegt. Programmierern wird ein Entwicklungshandbuch bereitgestellt, dieses erläutert die Möglichkeiten (JavaDoc) und die Grenzen.
+Die erstellten Grundlagen helfen eine generische Softwarebibliothek zu erstellen. Mit diesem Stück Software wird ermöglicht, Smartwatches und Smartphones schnell an die siot.net-Plattform anzubinden. Entwickler von Apps erleichtert dies die Arbeit, denn für die Verbindung an das \gls{IoT}-System kann die Bibliothek verwendet werden. Bei der generischen Anbindung wird in erster Linie das Hauptaugenmerk auf Sensordaten, sowie die Verbindung von Smartwatches gelegt. Zusätzlich wird Programmierern ein Entwicklerhandbuch bereitgestellt. Dieses erläutert die Möglichkeiten (JavaDoc) und beschreibt ein kleines Tutorial.
 
 Einige Funktionen werden mit einer Applikation gezeigt, welche die siot.net Anbindungsbibliothek integriert.
 
 \section{Abgrenzung}
-Smartwatches im allgemein gibt es von vielen verschiedenen Anbietern. In dieser Arbeit werden aller Arten Smartwatches analysiert. Der Schwerpunkt liegt für das Software Designs und die Implementationen auf Smartwatches, die mit dem Betriebssystem Android ausgeliefert werden. Diese Abgrenzung findet auch statt um die Programmiersprache hauptsächlich auf Java zu beschränken.
-
-Als Prozesssteuerung wird Kanban verwendet. Da dies Arbeit von einer Person durchgeführt wird dämmen die schlanken Zeit- und Prozessplanungsmethoden starken Overhead ein.
+Smartwatches im Allgemeinen gibt es von vielen verschiedenen Anbietern. In dieser Arbeit werden aller Art Smartwatches analysiert. Der Schwerpunkt für das Softwaredesign und die Implementationen liegt auf Smartwatches, die mit dem Betriebssystem Android ausgeliefert werden. Diese Abgrenzung findet statt, um die Entwicklung auf ein offenes System (Open Source) zu beschränken. Weiterhin wird die Stabilität und Sicherheit nicht genauer betrachtet, was im Rahmen dieser Arbeit nicht abzudecken wäre.
 
 \section{Projektmanagement}
+Für die Organisation der Arbeit ist ein Zeitplan erstellt und eine Prozesssteuerung verwendet worden. Als Prozesssteuerung diente Kanban. Da dies eine Einzelarbeit war, hielt die schlanken Zeit- und Prozessplanungsmethoden den Overhead in Grenzen. Als Dokumenten- und Quelltextablage, diente die Cloud Plattform github.com, diese verwendet als Versionskontrollsystem Git. Zu finden sind die Daten auf folgendem Verzeichnis: \url{https://github.com/paras1/sw-siot}.
+
 \subsection{Zeitplan}
-Für die Zeitplannung wird ein tabellarischer Zeitplan verwendet. Der Plan ist im Anhang beigelegt.
+Für die Zeitplanung kam ein tabellarischer Zeitplan zum Einsatz. Der Plan ist im Anhang zu betrachten.
 
 \subsection{Prozesssteuerung - Kanban}
-Für die Prozesssteuerung wird das Kanban Modell verwendet. Das Kanban Modell kommt ursprünglich aus Japan und heisst Signalkarte. Der Begriff Signalkarte, weil auf einer Tafel der Fortschritt des Projektes sichtbar ist. Entwicklet wurde das System durch den Toyota Konzern, welches für die Fertigung ihrer Produkte dienen soll. David J. Anderson (\url{www.djaa.com}) hat das Modell im Jahre 2007 für die Informationstechnologie adaptiert.
-Bei dieser Prozesssteuerungsart wird eine Prozesskette definiert und dann Aufgaben, welche Tickets genannt werden, ins Backlog erfasst. Das Kanbanboard besteht aus den Spalten aus der Prozesskette und den Status der Tickets. Zur Bearbeitung dieser Bachelor Thesis sind folgende Prozessspalten definiert worden: Backlog, Bereit (Ready), In Arbeit (In Progress), Erledigt (Done). Die Backlog Tickets sind dem tabellarischen Zeitplan zu entnehmen.
-Typischerweise wird bei einem Kanbanprojekt auch immer eine maximale Anzahl an Ticket ins Bearbeitung definiert. Bei einer Einzelarbeit, wurde darauf verzichtet um den Arbeitsfluss nicht zu hindern.
-Das Kanbanboard wurde nicht physisch geführt sondern mit einer Webapplikation\footnote{Kanbanboard: \url{https://waffle.io/paras1/sw-siot}}. Diese Applikation bildet den Backlog aus der Versionisierungsablage \footnote{GitHub Backlog: \url{https://github.com/paras1/sw-siot/issues}} ab in die definierte Prozesstafel. Nach beenden eines Tickets werden diese nach 5 Tagen aus dem Prozesssteuerungssystem entfernt um die Übersichtlichkeit hoch zu halten. In der Versionierungsablage werden diese dauerhaft gespeichert mit dem aktuellen status.
+Das Kanban Modell kommt ursprünglich aus Japan und heisst Signalkarte. Der Begriff Signalkarte, weil auf einer Tafel der Fortschritt des Projektes sichtbar ist. Entwickelt wurde das System durch den Toyota Konzern, welches für die Fertigung ihrer Produkte dienen soll. David J. Anderson (\url{www.djaa.com}) hat das Modell im Jahre 2007 für die Informationstechnologie adaptiert.
+Bei dieser Prozesssteuerungsart wird eine Prozesskette definiert und dann Aufgaben, welche Tickets genannt werden, ins Backlog erfasst. Das Kanbanboard besteht aus den Spalten der Prozesskette und dem Ticketstatus. Zur Bearbeitung dieser Bachelorthesis sind folgende Prozessspalten definiert worden: Backlog, Bereit (Ready), In Arbeit (In Progress), Erledigt (Done). Die Backlog Tickets sind dem tabellarischen Zeitplan zu entnehmen.
+Typischerweise wird bei einem Kanbanprojekt eine maximale Anzahl an Tickets zur gleichzeitigen Bearbeitung definiert. Bei dieser Einzelarbeit, wurde darauf verzichtet, um den Arbeitsfluss nicht zu hindern.
+Das Kanbanboard wurde nicht physisch geführt, sondern mit einer Webapplikation\footnote{Kanbanboard: \url{https://waffle.io/paras1/sw-siot}}. Diese Applikation bildet den Backlog aus der Versionisierungsablage\footnote{GitHub Backlog: \url{https://github.com/paras1/sw-siot/issues}} in die definierte Prozesstafel ab. Nach beenden eines Tickets werden diese nach fünf Tagen aus dem Prozesssteuerungssystem entfernt. Dies haltet die Übersichtlichkeit hoch. In der Versionisierungsablage (GitHub Issues) werden diese, mit dem aktuellen Status, dauerhaft gespeichert.

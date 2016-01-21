@@ -1,0 +1,45 @@
+\chapter{Fazit}
+Zum Abschluss der Bachelorthesis erfolgt eine Schlussfolgerung, welche die Arbeitsweise und die Erarbeitung der Ziele zusammenfassend erläutert. Des Weiteren gibt es einen kurzen Ausblick, in welche Richtung das Projekt weiterverlaufen wird.
+\section{Schlussfolgerung}
+Das Ziel dieser Arbeit war Smartwatches im Allgemeinen zu betrachten, vorhandene und mögliche Marktsegmente aufzuzeigen und eine grobe Bedürfnisanalyse durchzuführen. Zusätzlich war das spezifizieren und implementieren einer generischen Architektur, für die Anbindung von Smartphones und Smartwatches an die siot.net-Plattform, zu erreichen.\\
+
+Unter Einfluss des McKinsey Report (siehe \cite{mk:iot}) vom Juni 2015 wurden Gruppen ausgesucht. Diese dienten für die Definition der Marktsegmente und die Erarbeitung der Bedürfnisanalyse. Dabei wurde ersichtlich, dass eine Zielgruppe bereits sehr prominent ist. Smartwatches decken vor allem Bedürfnisse ab, welche mit der Überwachung des Menschen in Verbindung sind. Zusätzlich wurde klar, die Computeruhren stecken nach wie vor in den Kinderschuhen. Stand Januar 2016 gibt es noch keine Uhr oder Applikation, welche ein allgemeines Bedürfnis deckt. Trotz dieser Erkenntnis, wurde auch viel Potenzial gefunden, wie z.B. simultan Steuerung oder Smart Home Anwendungen.\\
+
+Es wurden Smartwatches evaluiert, welche für einen allgemeinen Einsatz geeignet waren. Es führte zu der Technologieauswahl von Android. Nun wurde die Smartwatches und Smartphones, mit dem Betriebssystem von Google, ein Konzept erarbeitet, sie an die siot.net-Plattform anzubinden.\\
+
+Um diese zu erreichen, musste die siot.net-Umgebung studiert und verstanden werden. Zusätzlich kam die Schwierigkeit dazu, dass die gesamte siot.net-Plattform, zu Beginn der Thesis, erst ein Konzept war. Die siot.net-Plattform befindet sich weiterhin im Aufbau. Infrastruktur für Testumgebungen mussten zuerst selber geschaffen werden.\\
+
+Aus dem Anforderungsdokument und dem Konzept ist zu erkennen, dass eine generische Bibliothek konzipiert wurde. Diese wird Android und Android Wear Entwicklern die Möglichkeit geben, ihre Applikationen mit schnellen und einfachen Mitteln an die siot.net-Plattform zu koppeln. Um ein solches Konstrukt zu erstellen, war das definieren von Architekturen unerlässlich. Ein Kernpunkt der Architektur ist das Kommunikationsverhalten. Dort wird abgehandelt wie die Smartwatch ins Internet kommunizieren kann.\\
+
+Mit Hilfe der spezifizierten Architektur ist die siot.net Gateway Library für Android System in einer Prototyp-Version realisiert worden. Diese implementiert das siot-Interface(siehe \cite{siot:cobo}). Zusätzlich kann die Verwaltung der Sensoren vollständig der Bibliothek übergeben werden. Beim Implementieren ist bedauerlicherweise auch ein Konzeptionsproblem entdeckt worden, was dazu führte, dass Aktoren noch nicht mit Daten angereichert werden können.\\
+
+Um diese generische Lösung zu verifizieren wurde eine Android und Android Wear App entwickelt: Das siot.net Sensorcenter. Diese erlaubt, ausgewählten Sensoren, Messdaten an die \gls{IoT}-Plattform zu senden. Bei der Realisierung der Applikation wurde ein Kommunikationskonzept, für den Datentransfer zwischen Smartphone und Smartwatch, entwickelt. Um die Applikation zu testen, wurde ein Sensortyp, der verwendeten Smartwatch, genauer angeschaut. Dazu wurden Messungen durchgeführt, welche auf der siot.io analysiert und ausgewertet wurden.\\
+
+Das persönliche Fazit. Von der Bachelorthesis wurde erhofft, dass die Erfahrung von Konzeptionierungen von Architekturen im \gls{IoT}-Bereich erweitert und die allgemeine Kenntnisse im Android Umfeld ausgebaut werden können.
+
+Die Entwicklung mit der Android und Android Wear Umgebung hat gezeigt, wie diese miteinander funktionieren. Zusätzlich wurde die Erkenntnis erlangt, dass es für Android Wear Smartwatches keine direkte Möglichkeit gibt, um mit dem Internet zu kommunizieren. Dies führte zur Einbuße, dass Smartwatches mit der siot.net Gateway Library auch mit Hilfe des Smartphones Daten austauschen müssen. So konnte die gesamte Kommunikationsarchitektur, für die Android Anbindung, selber spezifiziert werden.\\
+
+Diese Erkenntnis zeigt leider auf, dass der der Hersteller Google eine Abhängigkeit zu ihnen geschafft hat. Dies hat für sie den Vorteil, dass sie unter Umständen die Daten, welche von der Smartwatch gesendet werden, auch kennen. Dies ist nicht sehr zufriedenstellend. In einer möglichen anderen Arbeit, könnte ein Aspekt erarbeitet werden, welche ermöglicht diese Barriere zu umgehen.\\
+
+Bei der Umsetzung konnte erweitertes Know-how gewonnen werden, wie eine Erst-Implementation eines industriellen Projektes verläuft. Durch die Mitarbeit beim siot.net Projekt, in Kooperation mit den Entwicklern von AppModule, konnten interessante neue Coaching-Kenntnisse erlangt werden, da es ein internationales Projekt ist.\\
+
+Durch diese Erfahrungswerte, konnten die persönlich gesetzten Ziele, zur vollsten Zufriedenheit erreicht werden.
+
+\section{Ausblick}
+Im Rahmen dieser Bachelorthesis wurde ein Prototyp der siot.net Gateway Library erstellt und die siot.net Sensorcenter App realisiert. Beide Teile der Umsetzung sind für die Android-Plattform getätigt worden.
+
+Um die Bibliothek in eine Release-Version zu heben, müssen noch einige Punkte nachgebessert werden. Die genaue Konzeptionierung des Aktorhandlings, welches in der Implementationsphase gestoppt wurde, will neu aufgegleist sein. Des weiteren muss der Anwendungsfall vom Remote-Konfiguration von Android Sensoren aufgegriffen werden. Sicherheits- und Stabilitätsaspekte waren in dieser Arbeit nicht vorgesehen. Für die Kommunikation zu siot.net ist es unweigerlich, dass Lasttests durchgeführt werden. Wichtig ist auch ein Sicherheitskonzept zu erarbeiten. Ein Release dieser Bibliothek würde die siot.net-Plattform für Android Entwickler interessant machen, da sie dadurch eine Menge Zeit sparen können.
+
+In der siot.net-Plattform steckt sehr viel Potenzial. Je mehr Geräte an diese \gls{IoT}-Umgebung angebunden werden können, desto populärer wird es für die Anwender. Aus diesem Grund wird auch das Projekt der Android Bibliothek weitergeführt.
+
+\chapter*{Selbständigkeitserklärung}
+Ich bestätige mit meiner Unterschrift, dass ich meine vorliegende Bachelorthesis selbständig durchgeführt habe. Alle Informationsquellen (Fachliteratur, Besprechungen mit Fachleuten, usw.) und anderen Hilfsmittel, die wesentlich zu meiner Arbeit beigetragen haben, sind in meinem Arbeitsbericht im
+Anhang vollständig aufgeführt. Sämtliche Inhalte, die nicht von mir stammen, sind mit dem genauen Hinweis auf ihre Quelle gekennzeichnet.\\\\\\\\
+
+
+\begin{tabbing}
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx \kill
+Name, Vorname       \> ……………………………………………… \\\\\\
+Datum               \> ……………………………………………… \\\\\\
+Unterschrift        \> ……………………………………………… \\
+\end{tabbing}

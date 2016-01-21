@@ -1,12 +1,12 @@
 \chapter{Technische Anforderungen}
-In diesem Kapitel werden die Technischen Voraussetzungen, für die in der Bedürfnisanalyse ermittelten Anwendungen, definiert. Dabei wird unterschieden für Allgemeine Applikationen, welche nur eine kleine Auswahl beachtet wird, und für siot.net Applikationen.
+In diesem Kapitel werden die Technischen Voraussetzungen, für die, in der Bedürfnisanalyse ermittelten Anwendungen, definiert. Dabei wird unterschieden zwischen Allgemeine Applikationen, bei welcher nur eine kleine Auswahl beachtet wird, und zwischen siot.net Applikationen.
 
 \section{Allgemeine Applikationen Anforderungen}
 Die Technischen Anforderungen für die Bedürfnisse Gesundheit, Smart Home und Finanztechnologie werden in diesem Abschnitt definiert.
 
 \subsection{Gesundheit}
 Bei den Gesundheitsapplikationen ist es wichtig, dass die Smartwatch über einen Herzfrequenzmesser verfügt und die Kombination aus Gyroskop, Rotationssensor und Bewegungssensor eingebaut ist.
-Diese Elemente sind erforderlich um Pulsraten eines Menschen zu messen, sowie Analysen von Bewegungen zu erstellen.
+Diese Elemente sind erforderlich, um Pulsraten eines Menschen zu messen, sowie Analysen von Bewegungen zu erstellen.
 
 \textbf{Benötigte Sensoren:}\\
 - Gyroskop\\
@@ -15,7 +15,7 @@ Diese Elemente sind erforderlich um Pulsraten eines Menschen zu messen, sowie An
 - Herzfrequenzmesser
 
 \subsection{Smart Home}
-Für die Steuerung von Haushaltsgeräte, Heizung oder Licht wird vorallem ein Steuerungsanzeige benötigt. Dies ermöglicht die Apparate ein- und auszuschalten, die Beleuchtung zu dimmen und Benachrichtigungen (z.B. von offenem Fenster, beendetem Waschgang uvm.) anzuzeigen. Für eine automatische Helligkeitsregulierung sollte ein Lichtmesser eingebaut sein. Um für Alarme auszugeben ist ein Lautsprecher oder Vibrationsmotor hilfreich.
+Für die Steuerung von Haushaltsgeräten, Heizung oder Licht, wird vorallem eine Steuerungsanzeige benötigt. Diese ermöglicht die Apparate ein- und auszuschalten, die Beleuchtung zu dimmen und Benachrichtigungen (z.B. von offenem Fenster, beendetem Waschgang uvm.) anzuzeigen. Für eine automatische Helligkeitsregulierung sollte ein Lichtmesser eingebaut sein. Um Alarme ausgeben zu können, ist ein Lautsprecher oder Vibrationsmotor hilfreich.
 
 \textbf{Bedienelement:}\\
 - Touchscreen
@@ -28,13 +28,13 @@ Für die Steuerung von Haushaltsgeräte, Heizung oder Licht wird vorallem ein St
 - Lichtsensor
 
 \subsection{Finanztechnologie - FinTech}
-Für Geld Transaktionen zu führen wird eine drahtlose Verbindungsart vorausgesetzt. Transaktionen werden Bereits erwähnte Applikationen wie Apple Pay und Google Wallet verwenden den NFC (Near Field Communication) Chip und TWINT verwendet Bluetooth. Die Kommunikationsschnittstelle ist notwendig um Zahlungsanforderungen zu erhalten und diese auch zu authorisieren. Zum auswählen von Zahlungsoptionen und bestätigen von Überweisungen ist ein Bedienelement notwendig. Wenn mehrere Kreditkarten hinterlegt wären, muss der Anwender die Möglichkeit haben, um eine davon auszuwählen für die Überweisung.
+Um Geldtransaktionen durchführen zu können, wird eine drahtlose Verbindungseinheit vorausgesetzt. Bereits erwähnten Applikationen, wie Apple Pay und Google Wallet verwenden den \gls{NFC} (Near Field Communication) Chip und TWINT verwendet \gls{BLE}. Die Kommunikationsschnittstelle ist notwendig um Zahlungsanforderungen zu erhalten und diese auch zu autorisieren. Zum auswählen von Zahlungsoptionen und bestätigen von Überweisungen ist ein Bedienelement notwendig. Wenn mehrere Kreditkarten hinterlegt sind, muss der Anwender die Möglichkeit haben, eine bestimmte Kreditkarte für die Überweisung auszuwählen.
 
 \textbf{Auswahl von benötigten Kommunikationsschnittstellen:}\\
-- NFC Chip\\
+- \gls{NFC} Chip\\
 - Bluetooth\\
-- GSM/UMTS/LTE\\
-- Wireless LAN (weniger geeignet)
+- \gls{GSM}/\gls{UMTS}/\gls{LTE}\\
+- \gls{WLAN} (weniger geeignet)
 
 \textbf{Mögliche Bedienelemente:}\\
 - Touchscreen (beste Vorraussetzung)\\
@@ -42,79 +42,80 @@ Für Geld Transaktionen zu führen wird eine drahtlose Verbindungsart vorausgese
 - Physische Taste
 
 \section{siot.net Applikationen Anforderungen}
-Technische Voraussetzung für die siot.net Applikationen werden für alle in der Bedürfnisanalyse ermittelten Klassen definiert.
+Technische Voraussetzung für die siot.net Applikationen werden für alle, in der Bedürfnisanalyse ermittelten Klassen definiert.
 
 \subsection{siot.net Gateway Library}
-Die Bibliothek, welche smarte Geräte an die siot.net Plattform anbinden soll, wird in erster Linie nur für das Android Betriebsystem entwicklet. Für die Benutzung von Apps welche ans siot.net angeschlossen werden, müssen diese minimal die Android Tools der SDK Version 22 beherrschen (ab Android 5.0 Lollipop). Um die Daten an den MQTT Broker übermitteln zu können, braucht es ein Netzwerkmodul, die eine Verbindung ins Internet erlaubt. Die Bibliothek sollte alle verfügbaren und bekannten Sensoren selber erkennen. Die Verwendung, ob Sensoren aktiviert werden oder nicht, wird durch den Appentwickler oder der Software selber definiert.
+Die Bibliothek, welche smarte Geräte an die siot.net-Plattform anbinden soll, wird in erster Linie nur für das Android Betriebssystem entwickelt. Für die Benutzung von Apps, welche ans siot.net angeschlossen werden, müssen diese mindestens die Android Tools der \gls{SDK} Version 21 beherrschen (ab Android 5.0 Lollipop). Um die Daten an den \gls{MQTT} Broker übermitteln zu können, braucht es ein Netzwerkmodul, dass eine Verbindung ins Internet erlaubt. Die Bibliothek sollte alle verfügbaren und bekannten Sensoren selber erkennen. Die Verwendung, ob Sensoren aktiviert werden oder nicht, wird durch den Appentwickler oder der Software selber definiert.
 
 \textbf{Auswahl von benötigten Kommunikationsschnittstellen:}\\
-- NFC Chip\\
+- \gls{NFC} Chip\\
 - Bluetooth\\
-- GSM/UMTS/LTE\\
-- Wireless LAN
+- \gls{GSM}/\gls{UMTS}/\gls{LTE}\\
+- \gls{WLAN}
 
 \textbf{Betriebssystem:}\\
 - ab Android 5.0\\
-- ab SDK Tools Version 22 (Android Tools)
+- ab \gls{SDK} Tools Version 21 (Android Tools)
 
 \subsection{siot.net Sensorcenter}
-Die Sensorcenter App für Android Geräte soll ermöglichen, die dem Gerät verfügbaren Sensoren, dem siot.net zur Verfügung zu stellen. Die Applikation muss sich mit dem siot.net koppeln, Sensoren manifestieren und Sensordaten senden können. Diese App kann vom Bestehen der siot.net Gateway Library profitieren, welche integriert wird. Technisch benötigt diese Applikation, zusätzlich zu den Voraussetzungen der siot.net Gateway Library, ein Touchscreen.
+Mit der Sensorcenter Applikation von siot.net, soll jeder beliebige Benutzer die Sensormesswerte seines Android Gerätes ans siot.net senden können. Um dies zu ermöglichen muss eine Anmeldung ans siot.net, manifestieren von Sensoren, sowie senden von Messungen möglich sein. Diese App kann vom Bestehen der siot.net Gateway Library profitieren, welche integriert werden soll. Technisch benötigt diese Applikation, zusätzlich zu den Voraussetzungen der siot.net Gateway Library, ein Touchscreen.
 
 \textbf{Auswahl von benötigten Kommunikationsschnittstellen:}\\
-- NFC Chip\\
+- \gls{NFC} Chip\\
 - Bluetooth\\
-- GSM/UMTS/LTE\\
-- Wireless LAN
+- \gls{GSM}/\gls{UMTS}/\gls{LTE}\\
+- \gls{WLAN}
 
 \textbf{Bevorzugtes Bedienelement:}\\
 - Touchscreen
 
 \textbf{Betriebssystem:}\\
 - ab Android 5.0\\
-- ab SDK Tools Version 22 (Android Tools)
+- ab \gls{SDK} Tools Version 21 (Android Tools)
 
 \subsection{siot.net Dashboard App}
-Um Sensordaten von der siot.net Plattform darzustellen eignet sich eine Dashboard App. Diese wird in dieser Arbeit vorraussichtlich nur für Android Geräte in betracht gezogen. Für die Darstellung einer derartigen digitalen Instrumententafel eignet sich ein Display, bevorzugt ein Touchscreen. Ein Berührbildschirm erlaubt es die gewünschten Anzeigen bequem einzublenden. Eine weitere Voraussetzung ist die Vernetzung. Das Gerät muss einen Zugang zum Internet herstellen können. Nur durch eine erfolgreiche Anmeldung an den siot.net MQTT Broker, können die Informationen empfangen werden.
+Um Sensordaten von der siot.net-Plattform darzustellen, eignet sich eine Dashboard App. Anforderungen für diese Applikation sind in dieser Arbeit nur für Android Geräte spezifizert. Für die Darstellung einer derartigen digitalen Instrumententafel eignet sich ein Display, bevorzugt ein Touchscreen. Ein Berührbildschirm erlaubt es die gewünschten Anzeigen bequem einzublenden. Eine weitere Voraussetzung ist die Vernetzung. Das Gerät muss einen Zugang zum Internet herstellen können. Nur durch eine erfolgreiche Anmeldung an den siot.net \gls{MQTT} Broker, können die Informationen empfangen werden.
 
 \textbf{Auswahl von benötigten Kommunikationsschnittstellen:}\\
-- NFC Chip\\
+- \gls{NFC} Chip\\
 - Bluetooth\\
-- GSM/UMTS/LTE\\
-- Wireless LAN
+- \gls{GSM}/\gls{UMTS}/\gls{LTE}\\
+- \gls{WLAN}
 
 \textbf{Bevorzugtes Bedienelement:}\\
 - Touchscreen
 
 \textbf{Betriebssystem:}\\
 - ab Android 5.0\\
-- ab SDK Tools Version 22 (Android Tools)
+- ab \gls{SDK} Tools Version 21 (Android Tools)
 
-\subsection{Herzfrequenz Überwachung}
-Die Herzfrenquenz Überwachung ist eine schlanke Variante des Dashboards. Um eine Anzeige wie bei einem Elektrokardiogramm (EKG) darzustellen braucht es ein Display. Und um Daten zu erhalten braucht es einen Herzfrequenzmesser. Um bei Überschreitung von definierten Werten einen Alarm auszulösen, braucht es womöglich noch Lautsprecher um akustische Signale auszusenden oder einen Vibrationsmotor für lautlose Anmeldungen.
+\subsection{Herzfrequenzüberwachung}
+Die Herzfrequenzüberwachung ist eine schlanke Variante des Dashboards. Um eine Anzeige, wie bei einem Elektrokardiogramm (\gls{EKG}) darzustellen, braucht es ein Display. Und um Messdaten zu erhalten braucht es einen Pulsmesser. Für einen Alarm auszulösen, beim Überschreitung von definierten Werten, braucht es einen Lautsprecher und/oder einen Vibrationsmotor, damit akustische oder taktile Signale ausgesendet werden können.
 
 \textbf{Auswahl von benötigten Kommunikationsschnittstellen:}\\
 - Bluetooth\\
-- GSM/UMTS/LTE\\
-- Wireless LAN
+- \gls{GSM}/\gls{UMTS}/\gls{LTE}\\
+- \gls{WLAN}
 
 \textbf{Bevorzugtes Anzeigen / Aktoren:}\\
 - Touchscreen\\
-- Lautsprecher
+- Lautsprecher\\
+- Vibrationsmotor
 
 \textbf{Sensoren:}\\
 - Herzfrequenzmesser
 
 \textbf{Betriebssystem:}\\
 - ab Android 5.0\\
-- ab SDK Tools Version 22 (Android Tools)
+- ab \gls{SDK} Tools Version 21 (Android Tools)
 
 \subsection{Steuerung von Modellen}
-Für die Kontrolle über ein Modellfahrzeug oder Modellflugzeug zu erhalten, benötigt dieses einen Hardwarekontroller, welcher sich mit dem siot.net MQTT Broker verbinden kann. Die Steuerungseinheit muss auf die MQTT Topic subscriben und die empfangenen Bewegungsdaten interpretieren und an die erforderlichen Antriebsmotoren und Servos weitergeben. Als Kontroller könnte ein Raspberry Pi Zero oder ähnliches zum Tragen kommen. Auf den Hardwarekontroller wird nicht weiter eingegangen. Als Sender und Ermittler der Bewegungs- und Beschleunigungsdaten kommt ein Android Device (mit siot.net Sensorcenter) zum Einsatz.
+Um die Kontrolle über ein Modellfahrzeug oder Modellflugzeug zu erhalten, benötigt es einen Hardwarekontroller, welcher sich mit dem siot.net \gls{MQTT} Broker verbinden kann. Die Steuerungseinheit muss auf die \gls{MQTT} Topic subscriben und die empfangenen Bewegungsdaten interpretieren und an die erforderlichen Antriebsmotoren und Servos weitergeben werden. Als Kontroller könnte ein Raspberry Pi Zero oder Ähnliches zum Tragen kommen. Auf den Hardwarekontroller wird nicht weiter eingegangen. Als Sender und Ermittler der Bewegungs- und Beschleunigungsdaten kommt ein Android Device (z.B. mit siot.net Sensorcenter) zum Einsatz. Damit muss die Spezifikation für die Steuerung nicht mehr weiter betrachtet werden, da diese mit dem Sensorcenter abgedeckt wird.
 
 \textbf{Auswahl von benötigten Kommunikationsschnittstellen:}\\
 - Bluetooth\\
-- GSM/UMTS/LTE\\
-- Wireless LAN
+- \gls{GSM}/\gls{UMTS}/\gls{LTE}\\
+- \gls{WLAN}
 
 \textbf{Bevorzugtes Anzeigen / Aktoren:}\\
 - Touchscreen\\
@@ -122,11 +123,11 @@ Für die Kontrolle über ein Modellfahrzeug oder Modellflugzeug zu erhalten, ben
 
 \textbf{Sensoren:}\\
 - Bewegungssensor\\
-- Beschleunigungsensor\\
+- Beschleunigungssensor\\
 - Gyroskop
 
 \textbf{Betriebssystem:}\\
 - ab Android 5.0\\
-- ab SDK Tools Version 22 (Android Tools)
+- ab \gls{SDK} Tools Version 21 (Android Tools)
 
 \newpage
